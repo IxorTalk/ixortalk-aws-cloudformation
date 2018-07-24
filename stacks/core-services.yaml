@@ -1,0 +1,467 @@
+#
+# MIT License
+#
+# Copyright (c) 2018 IxorTalk CVBA
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+
+    This template deploys the IxorTalk ECS services from containers published on
+    Dockerhub.
+
+Parameters:
+
+    SpringCloudConfigLabel:
+        Description: The branch of the config environment to use
+        Type: String
+        Default: master
+
+    SpringProfilesActive:
+        Type: String
+        Default: tst
+
+    Environment:
+        Description: The target environment (tst/stg/prd)
+        Type: String
+        Default: tst
+
+    ProjectName:
+        Type: String
+        Default: demo
+
+    S3TemplatesBucketName:
+        Type: String
+        Default: "ixortalktooling-prd-aws-cloudformation"
+
+    AuthDBMasterPassword:
+        Description: Password for admin user
+        Type: String
+        Default: SuperSecurePassword
+        NoEcho: "true"
+
+    HostedZoneNameWithoutDot:
+        Type: String
+        Default: yourdomain.com
+
+    SpringCloudConfigServerURI:
+        Description: The URI for the config server of the application (eg. https://github.com/IxorTalk/ixortalk.config.demo.git)
+        Type: String
+
+    SubdomainExternal:
+        Type: String
+        Default: www
+
+    AlertManagerImageVersion:
+        Type: String
+        Default: latest
+
+    AssetMgmtImageVersion:
+        Type: String
+        Default: latest
+
+    AssetMgmtUiImageVersion:
+        Type: String
+        Default: latest
+
+    AuthServerImageVersion:
+        Type: String
+        Default: latest
+
+    ConfigServerImageVersion:
+        Type: String
+        Default: latest
+
+    GatewayImageVersion:
+        Type: String
+        Default: latest
+
+    NginxImageVersion:
+        Type: String
+        Default: latest
+
+    GrafanaImageVersion:
+        Type: String
+        Default: latest
+
+    MailingServiceImageVersion:
+        Type: String
+        Default: latest
+
+    UserRegistrationApiImageVersion:
+        Type: String
+        Default: latest
+
+    PrometheusImageVersion:
+        Type: String
+        Default: latest
+
+    BlackboxExporterImageVersion:
+        Type: String
+        Default: latest
+
+    CAdvisorImageVersion:
+        Type: String
+        Default: latest
+
+    NodeExporterImageVersion:
+        Type: String
+        Default: latest
+
+Resources:
+
+    AlertManagerService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue ecs-infra:ECS-Cluster
+                ContainerName: ixortalk-alertmanager
+                ContainerPort: 9093
+                HealthCheckPath: /alertmanager/
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /alertmanager/*
+                ListenerRulePriority: 1
+                TaskDefinition: !GetAtt AlertmanagerTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: AlertmanagerTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: AlertManagerService
+
+
+    AssetMgmtService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-assetmgmt
+                ContainerPort: 8001
+                HealthCheckPath: /assetmgmt/actuator/health
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /assetmgmt/*
+                ListenerRulePriority: 2
+                TaskDefinition: !GetAtt AssetmgmtTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: AssetmgmtTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: AssetMgmtService
+
+    AssetMgmtUIService:
+            Type: AWS::CloudFormation::Stack
+            Properties:
+                TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+                Parameters:
+                    Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                    ContainerName: ixortalk-assetmgmt-ui
+                    ContainerPort: 7001
+                    HealthCheckPath: /assetmgmt-ui/health
+                    Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                    ListenerPath: /assetmgmt-ui/*
+                    ListenerRulePriority: 70
+                    TaskDefinition: !GetAtt AssetmgmtUITaskDefinition.Outputs.TaskDefinition
+                    TargetGroupName: AssetmgmtUITG
+                    VPC: !ImportValue "vpc:VPC"
+                    ServiceName: AssetMgmtUIService
+
+    AuthService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-authserver
+                ContainerPort: 9999
+                HealthCheckPath: /uaa/actuator/health
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /uaa/*
+                ListenerRulePriority: 5
+                TaskDefinition: !GetAtt AuthserverTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: AuthTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: AuthService
+
+    ConfigService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-configserver
+                ContainerPort: 8899
+                DesiredCount: 2
+                HealthCheckPath: /config/actuator/health
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /config/*
+                ListenerRulePriority: 7
+                TaskDefinition: !GetAtt ConfigserverTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: ConfigTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: ConfigService
+
+
+    GatewayService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-gateway
+                ContainerPort: 8888
+                Listener: !ImportValue ecs-infra:ExternalLB-HTTPS-Listener
+                ListenerPath: /*
+                ListenerRulePriority: 100
+                HealthCheckPath: /actuator/health
+                TaskDefinition: !GetAtt GatewayTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: GatewayTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: GatewayService
+
+    GrafanaService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-nginx-grafana
+                ContainerPort: 3001
+                HealthCheckPath: /grafana/health
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /grafana/*
+                ListenerRulePriority: 8
+                TaskDefinition: !GetAtt GrafanaTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: GrafanaTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: GrafanaService
+
+    MailingService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-mailing-service
+                ContainerPort: 8003
+                HealthCheckPath: /mailing/actuator/health
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /mailing/*
+                ListenerRulePriority: 4
+                TaskDefinition: !GetAtt MailingServiceTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: MailingServiceTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: MailingService
+
+    UserRegistrationApiService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-user-registration-api
+                ContainerPort: 8005
+                HealthCheckPath: /user-registration/actuator/health
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /user-registration/*
+                ListenerRulePriority: 10
+                TaskDefinition: !GetAtt UserRegistrationApiServiceTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: UserRegistrationApiTargetGroup
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: UserRegistrationApiService
+
+    NginxExternalService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-nginx-external
+                ContainerPort: 80
+                HealthCheckPath: /health
+                Listener: !ImportValue ecs-infra:ExternalLB-HTTP-Listener
+                ListenerPath: /*
+                ListenerRulePriority: 100
+                TaskDefinition: !GetAtt NginxExternalTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: NginxExternalTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: NginxExternalService
+
+    PrometheusService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-prometheus
+                ContainerPort: 9090
+                HealthCheckPath: /prometheus/graph
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /prometheus/*
+                ListenerRulePriority: 9
+                TaskDefinition: !GetAtt PrometheusTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: PrometheusTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: PrometheusService
+
+    PrometheusSupportService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-prometheus-support-nginx
+                ContainerPort: 8004
+                HealthCheckPath: /prometheus-support/health
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /prometheus-support/*
+                ListenerRulePriority: 98
+                TaskDefinition: !GetAtt PrometheusSupportTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: PrometheusSupportTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: PrometheusSupportService
+
+    AlertmanagerTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/alertmanager.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                AlertManagerImageVersion: !Ref AlertManagerImageVersion
+
+    AssetmgmtTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/assetmgmt.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                AssetMgmtImageVersion: !Ref AssetMgmtImageVersion
+
+    AssetmgmtUITaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/assetmgmt-ui.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                AssetMgmtUiImageVersion: !Ref AssetMgmtUiImageVersion
+
+    AuthserverTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/authserver.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                JDBCConnectionString: !ImportValue "rds:AuthRDS-JDBCConnectionString"
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                AuthServerImageVersion: !Ref AuthServerImageVersion
+                RDSMasterPassword: !Ref AuthDBMasterPassword
+
+    ConfigserverTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/configserver.taskdefinition.yaml
+            Parameters:
+                ProjectName: !Ref ProjectName
+                Environment: !Ref Environment
+                S3TemplatesBucketName: !Ref S3TemplatesBucketName
+                SpringCloudConfigServerURI: !Ref SpringCloudConfigServerURI
+                SpringProfilesActive: !Ref SpringProfilesActive
+                ConfigServerImageVersion: !Ref ConfigServerImageVersion
+                GitUriPrefix: !Select [ 0, !Split [ ':', !Ref SpringCloudConfigServerURI ] ]
+
+    GatewayTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/gateway.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                GatewayImageVersion: !Ref GatewayImageVersion
+
+    GrafanaTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/grafana.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                NginxImageVersion: !Ref NginxImageVersion
+                GrafanaImageVersion: !Ref GrafanaImageVersion
+
+    MailingServiceTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/mailing.service.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                MailingServiceImageVersion: !Ref MailingServiceImageVersion
+
+    UserRegistrationApiServiceTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/user-registration-api.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                UserRegistrationApiImageVersion: !Ref UserRegistrationApiImageVersion
+
+    NginxExternalTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/nginx-external.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                NginxImageVersion: !Ref NginxImageVersion
+
+    PrometheusTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/prometheus.taskdefinition.yaml
+            Parameters:
+                ExternalLoadbalancerDNS: !Join [".", [!Ref SubdomainExternal, !Ref HostedZoneNameWithoutDot]]
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                PrometheusImageVersion: !Ref PrometheusImageVersion
+
+    PrometheusSupportTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/prometheus-support.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                NginxImageVersion: !Ref NginxImageVersion
+                BlackboxExporterImageVersion: !Ref BlackboxExporterImageVersion
+                CAdvisorImageVersion: !Ref CAdvisorImageVersion
+                NodeExporterImageVersion: !Ref NodeExporterImageVersion

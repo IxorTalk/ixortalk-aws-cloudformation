@@ -1,0 +1,12 @@
+{
+    "Rules": [
+        {
+            "ID": "Expire non current version after 60 days",
+            "Prefix": "",
+            "Status": "Enabled",
+            "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 60
+            }
+        }
+    ]
+}
