@@ -42,7 +42,7 @@ Description: >
 
 Resources:
 
-  #TODO: Create security group for lambda
+  #TODO: Create security group for lambda, S3 bucket should be reachable by non-ixor accounts
   RDSLambda:
     Type: AWS::Lambda::Function
     Properties:
