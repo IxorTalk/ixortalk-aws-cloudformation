@@ -55,6 +55,10 @@ Parameters:
         Type: String
         Default: ""
 
+    InstanceType:
+        Default: t2.large
+        Type: String
+
 Resources:
 
     BastionHost:
@@ -88,7 +92,7 @@ Resources:
                 ECSBucket: !Sub ixortalk-${ProjectName}-ecs-${Environment}
                 ECSHostRole: !GetAtt Roles.Outputs.ECSHostRole
                 HostedZoneName: !Ref HostedZoneName
-                InstanceType: t2.large
+                InstanceType: !Ref InstanceType
                 SecurityGroup: !ImportValue "vpc:ECSHostSecurityGroup"
                 EC2HostSSHKeyName: !Ref EC2HostSSHKeyName
                 Subnets: !ImportValue "vpc:PrivateSubnets"
