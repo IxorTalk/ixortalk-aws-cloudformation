@@ -45,7 +45,7 @@ Parameters:
         Default: 1
         MinValue: 0
 
-    InstanceType:
+    ECSHostInstanceType:
         Description: Which instance type should we use to build the ECS cluster?
         Type: String
 
@@ -78,42 +78,43 @@ Mappings:
 
     AWSRegionToAMI:
         us-east-2:
-            AMI: ami-ef64528a
+            AMI: ami-028a9de0a7e353ed9
         us-east-1:
-            AMI: ami-cad827b7
+            AMI: ami-00129b193dc81bc31
         us-west-2:
-            AMI: ami-baa236c2
+            AMI: ami-00d4f478
         us-west-1:
-            AMI: ami-29b8b249
+            AMI: ami-0d438d09af26c9583
         eu-west-3:
-            AMI: ami-0356e07e
+            AMI: ami-07da674f0655ef4e1
         eu-west-2:
-            AMI: ami-25f51242
+            AMI: ami-a44db8c3
         eu-west-1:
-            AMI: ami-64c4871d
+            AMI: ami-0af844a965e5738db
         eu-central-1:
-            AMI: ami-3b7d1354
+            AMI: ami-0291ba887ba0d515f
         ap-northeast-2:
-            AMI: ami-3b19b455
+            AMI: ami-047d2a61f94f862dc
         ap-northeast-1:
-            AMI: ami-bb5f13dd
+            AMI: ami-0041c416aa23033a2
         ap-southeast-2:
-            AMI: ami-a677b6c4
+            AMI: ami-0092e55c70015d8c3
         ap-southeast-1:
-            AMI: ami-f88ade84
+            AMI: ami-091bf462afdb02c60
         ca-central-1:
-            AMI: ami-db48cfbf
+            AMI: ami-192fa27d
         ap-south-1:
-            AMI: ami-9e91cff1
+            AMI: ami-0c179ca015d301829
         sa-east-1:
-            AMI: ami-da2c66b6
+            AMI: ami-0018ff8ee48970ac3
 
     InstanceTypeToOnDemandPrice:
         t2.medium:
             price: 0.0536
         t2.large:
             price: 0.1072
-
+        t2.xlarge:
+            price: 0.2144
 
 Resources:
 
@@ -155,11 +156,11 @@ Resources:
         Properties:
             IamInstanceProfile: !Ref ECSInstanceProfile
             ImageId:  !FindInMap [AWSRegionToAMI, !Ref "AWS::Region", AMI]
-            InstanceType: !Ref InstanceType
+            InstanceType: !Ref ECSHostInstanceType
             KeyName: !If [EC2HostSSHKeyNameProvided, !Ref EC2HostSSHKeyName, !Ref "AWS::NoValue"]
             SecurityGroups:
                 - !Ref SecurityGroup
-            SpotPrice: !FindInMap [InstanceTypeToOnDemandPrice, !Ref InstanceType, price]
+            SpotPrice: !FindInMap [InstanceTypeToOnDemandPrice, !Ref ECSHostInstanceType, price]
             UserData:
                 #Ensures the latest aws helper scripts are installed
                 "Fn::Base64": !Sub |
