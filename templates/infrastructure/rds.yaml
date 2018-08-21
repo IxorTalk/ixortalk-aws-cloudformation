@@ -234,5 +234,8 @@ Outputs:
         Export:
           Name: !Ref JDBCConnectionStringExportName
 
-    SecurityGroup:
-        Value: !Ref SecurityGroup
+    DBName:
+        Value: !Ref DBName
+
+    Host:
+        Value: !GetAtt Database.Endpoint.Address
