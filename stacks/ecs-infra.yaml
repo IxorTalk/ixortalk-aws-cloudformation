@@ -55,7 +55,7 @@ Parameters:
         Type: String
         Default: ""
 
-    InstanceType:
+    ECSHostInstanceType:
         Default: t2.large
         Type: String
 
@@ -92,7 +92,7 @@ Resources:
                 ECSBucket: !Sub ixortalk-${ProjectName}-ecs-${Environment}
                 ECSHostRole: !GetAtt Roles.Outputs.ECSHostRole
                 HostedZoneName: !Ref HostedZoneName
-                InstanceType: !Ref InstanceType
+                ECSHostInstanceType: !Ref ECSHostInstanceType
                 SecurityGroup: !ImportValue "vpc:ECSHostSecurityGroup"
                 EC2HostSSHKeyName: !Ref EC2HostSSHKeyName
                 Subnets: !ImportValue "vpc:PrivateSubnets"
