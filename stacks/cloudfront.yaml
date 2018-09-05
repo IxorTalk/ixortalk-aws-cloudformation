@@ -47,7 +47,7 @@ Parameters:
         Type: String
 
 Conditions:
-  IsProd: !Equals ["prod", !Ref Environment]
+    IsProd: !Or [!Equals ["prod", !Ref Environment], !Equals ["prd", !Ref Environment]]
 
 Resources:
 
