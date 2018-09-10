@@ -48,6 +48,9 @@ Parameters:
     NodeExporterImageVersion:
         Type: String
 
+    PrometheusSupportNginxAuthEnabled:
+        Type: String
+
 
 Resources:
     TaskDefinition:
@@ -69,7 +72,7 @@ Resources:
                   - Name: "IXORTALK_CONFIG_SERVER_LABEL"
                     Value: !Ref SpringCloudConfigLabel
                   - Name: "IXORTALK_NGINX_ENABLE_BASIC_AUTH"
-                    Value: 'false'
+                    Value: !Ref PrometheusSupportNginxAuthEnabled
                   - Name: "IXORTALK_CONFIG_SERVER_URL"
                     Value: !Sub https://${LoadbalancerDNS}/config
                   - Name: "IXORTALK_NGINX_SUFFIX"

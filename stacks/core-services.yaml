@@ -127,6 +127,10 @@ Parameters:
         Type: String
         Default: latest
 
+    PrometheusSupportNginxAuthEnabled:
+        Type: String
+        Default: 'false'
+
 Resources:
 
     AlertManagerService:
@@ -465,3 +469,4 @@ Resources:
                 BlackboxExporterImageVersion: !Ref BlackboxExporterImageVersion
                 CAdvisorImageVersion: !Ref CAdvisorImageVersion
                 NodeExporterImageVersion: !Ref NodeExporterImageVersion
+                PrometheusSupportNginxAuthEnabled: !Ref PrometheusSupportNginxAuthEnabled
