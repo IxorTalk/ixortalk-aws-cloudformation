@@ -63,7 +63,7 @@ Resources:
             ContainerDefinitions:
                 - Name: ixortalk-authserver
                   Image: !Sub ixortalk/ixortalk-authserver:${AuthServerImageVersion}
-                  Memory: 640
+                  Memory: 768
                   Environment:
                   - Name: "SPRING_PROFILES_ACTIVE"
                     Value: !Ref SpringProfilesActive
