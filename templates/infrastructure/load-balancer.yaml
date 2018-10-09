@@ -65,6 +65,10 @@ Parameters:
         Description: Choose which VPC the Application Load Balancer should be deployed to
         Type: AWS::EC2::VPC::Id
 
+    AccessLogsS3BucketName:
+        Description: The name for the S3 bucket to store the access logs for this loadbalancer
+        Type: String
+
 Conditions:
     HTTPS:
         !Not [!Equals ["", !Ref HTTPSListenerExportName]]
@@ -79,14 +83,44 @@ Conditions:
 
 Resources:
 
+    AccessLogS3Bucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            BucketName: !Ref AccessLogsS3BucketName
+            LifecycleConfiguration:
+                Rules:
+                - ExpirationInDays: 1
+                  Status: Enabled
+
+    AccessLogS3BucketPolicy:
+        Type: AWS::S3::BucketPolicy
+        Properties:
+            Bucket: !Ref AccessLogsS3BucketName
+            PolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                -   Sid: S3AccessForLoadbalancer
+                    Effect: Allow
+                    Action: "s3:PutObject"
+                    Resource: !Sub arn:aws:s3:::${AccessLogsS3BucketName}/AWSLogs/${AWS::AccountId}/*
+                    Principal:
+                      AWS:
+                          - !Sub arn:aws:iam::054676820928:root
+
     LoadBalancer:
         Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+        DependsOn: AccessLogS3Bucket
         Properties:
             Name: !Ref LoadBalancerName
             Scheme: !Ref Scheme
             Subnets: !Ref Subnets
             SecurityGroups:
                 - !Ref SecurityGroup
+            LoadBalancerAttributes:
+                - Key: access_logs.s3.enabled
+                  Value: true
+                - Key: access_logs.s3.bucket
+                  Value: !Ref AccessLogsS3BucketName
 
     HTTPLoadBalancerListener:
         Condition: HTTP
