@@ -113,6 +113,7 @@ Resources:
                 SecurityGroup: !ImportValue "vpc:ExternalLBSecurityGroup"
                 Subnets: !ImportValue "vpc:PublicSubnets"
                 VPC: !ImportValue "vpc:VPC"
+                AccessLogsS3BucketName: !Sub ${ProjectName}-${Environment}-external-lb-access-logs
 
     InternalLB:
         Type: AWS::CloudFormation::Stack
@@ -127,6 +128,7 @@ Resources:
                 SecurityGroup: !ImportValue "vpc:InternalLBSecurityGroup"
                 Subnets: !ImportValue "vpc:PrivateSubnets"
                 VPC: !ImportValue "vpc:VPC"
+                AccessLogsS3BucketName: !Sub ${ProjectName}-${Environment}-internal-lb-access-logs
 
     Route53:
         Type: AWS::CloudFormation::Stack
