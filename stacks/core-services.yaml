@@ -149,7 +149,8 @@ Resources:
                 TargetGroupName: AlertmanagerTG
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: AlertManagerService
-
+                ServiceDeploymentMaximumPercent: 100
+                ServiceDeploymentMinimumHealthyPercent: 0
 
     AssetMgmtService:
         Type: AWS::CloudFormation::Stack
@@ -219,7 +220,6 @@ Resources:
                 TargetGroupName: ConfigTG
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: ConfigService
-
 
     GatewayService:
         Type: AWS::CloudFormation::Stack
@@ -322,6 +322,8 @@ Resources:
                 TargetGroupName: PrometheusTG
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: PrometheusService
+                ServiceDeploymentMaximumPercent: 100
+                ServiceDeploymentMinimumHealthyPercent: 0
 
     PrometheusSupportService:
         Type: AWS::CloudFormation::Stack

@@ -72,6 +72,14 @@ Parameters:
     ServiceName:
         Type: String
 
+    ServiceDeploymentMaximumPercent:
+        Type: Number
+        Default: 200
+
+    ServiceDeploymentMinimumHealthyPercent:
+        Type: Number
+        Default: 50
+
     VPC:
         Description: The VPC that the ECS cluster is deployed to
         Type: AWS::EC2::VPC::Id
@@ -87,8 +95,8 @@ Resources:
             Role: !ImportValue "ecs-infra:ECSServiceRole"
             DesiredCount: !Ref DesiredCount
             DeploymentConfiguration:
-                MaximumPercent: 100
-                MinimumHealthyPercent: 0
+                MaximumPercent: 200
+                MinimumHealthyPercent: 50
             TaskDefinition: !Ref TaskDefinition
             LoadBalancers:
                 - ContainerName: !Ref ContainerName
