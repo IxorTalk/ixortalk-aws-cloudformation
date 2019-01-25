@@ -66,3 +66,5 @@ Outputs:
 
     EFSFileSystemID:
         Value: !Ref EFS
+        Export:
+          Name: "vpc:EFSFileSystemID"
