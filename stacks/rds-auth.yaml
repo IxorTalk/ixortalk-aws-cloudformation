@@ -44,6 +44,10 @@ Parameters:
         Default: SuperSecurePassword
         NoEcho: "true"
 
+    AuthDBStorage:
+        Type: Number
+        Default: 5
+
 
 Resources:
 
@@ -58,4 +62,5 @@ Resources:
                     SourceSecurityGroup: !ImportValue "vpc:ECSHostSecurityGroup"
                     Subnets: !ImportValue "vpc:PrivateSubnets"
                     VPC: !ImportValue "vpc:VPC"
+                    Storage: !Ref AuthDBStorage
 

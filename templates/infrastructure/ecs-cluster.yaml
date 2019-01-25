@@ -151,7 +151,7 @@ Resources:
             DesiredCapacity: !Ref InitialClusterSize
             LaunchConfigurationName: !Ref ECSLaunchConfiguration
             MaxSize: 2
-            MinSize: 0
+            MinSize: 1
             Tags:
                 - Key: Name
                   Value: ECS-Host
@@ -193,11 +193,8 @@ Resources:
                     #!/bin/bash
                     yum install -y aws-cfn-bootstrap aws-cli jq
                     aws s3 cp s3://${ECSBucket}/ecs-auth.config /etc/ecs/ecs.config
-                    aws s3 cp s3://${ECSBucket}/upsert_record_set.bash /tmp/aws-route53/upsert_record_set.bash
-                    chmod u+x /tmp/aws-route53/upsert_record_set.bash
                     /opt/aws/bin/cfn-init -v --region ${AWS::Region} --stack ${AWS::StackName} --resource ECSLaunchConfiguration
                     /opt/aws/bin/cfn-signal -e $? --region ${AWS::Region} --stack ${AWS::StackName} --resource ECSAutoScalingGroup
-                    /tmp/aws-route53/upsert_record_set.bash ecs-host.internal.${HostedZoneName} A $(curl -s http://169.254.169.254/latest/meta-data/local-ipv4/)
 
                     --==BOUNDARY==--
 
