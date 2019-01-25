@@ -79,6 +79,10 @@ Parameters:
         Type: String
         Default: latest
 
+    AssetStateImageVersion:
+        Type: String
+        Default: latest
+
     AssetMgmtUiImageVersion:
         Type: String
         Default: latest
@@ -168,6 +172,23 @@ Resources:
                 TargetGroupName: AssetmgmtTG
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: AssetMgmtService
+
+    AssetStateService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-assetstate
+                ContainerPort: 8002
+                HealthCheckPath: /assetstate/actuator/health
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /assetstate/*
+                ListenerRulePriority: 3
+                TaskDefinition: !GetAtt AssetStateTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: AssetStateTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: AssetStateService
 
     AssetMgmtUIService:
             Type: AWS::CloudFormation::Stack
@@ -361,6 +382,16 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 AssetMgmtImageVersion: !Ref AssetMgmtImageVersion
+
+    AssetStateTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/assetstate.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                AssetStateImageVersion: !Ref AssetStateImageVersion
 
     AssetmgmtUITaskDefinition:
         Type: AWS::CloudFormation::Stack
