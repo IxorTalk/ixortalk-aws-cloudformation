@@ -43,4 +43,3 @@ aws s3api put-bucket-lifecycle-configuration --bucket ${bucket} --lifecycle-conf
 aws s3api put-bucket-encryption --bucket ${bucket} --server-side-encryption-configuration file://../ixortalk-aws-cloudformation/scripts/one-time/resources/s3_config/encryption-config.json
 
 aws s3 cp ${ECS_S3_FOLDER} s3://${bucket}/ --recursive
-aws s3 cp ../ixortalk-aws-cloudformation/scripts/one-time/resources/upsert_record_set.bash s3://${bucket}/

@@ -81,37 +81,39 @@ Mappings:
 
     AWSRegionToAMI:
         ap-northeast-1:
-            AMI: ami-0d5f884dada5562c6
+            AMI: ami-0b37663be8bbe0d3a
         ap-northeast-2:
-            AMI: ami-0060ad36f655af38b
+            AMI: ami-0e1789b579cf905bf
         ap-south-1:
-            AMI: ami-056a07eb5b1d13734
+            AMI: ami-00925cf783e2e8fa0
         ap-southeast-1:
-            AMI: ami-065c0bd2832a70f9d
+            AMI: ami-0868ea3484cc0cd39
         ap-southeast-2:
-            AMI: ami-0aa8b7a8042811ddf
+            AMI: ami-04d525f01efc24268
         ca-central-1:
-            AMI: ami-0d50dee936e241e7e
+            AMI: ami-0d797597b39c09784
         eu-central-1:
-            AMI: ami-03804565a6baf6d30
+            AMI: ami-0e4ccc6bc8b6243c4
+        eu-north-1:
+            AMI: ami-04f5a7cba4ff05434
         eu-west-1:
-            AMI: ami-0dbcd2533bc72c3f6
+            AMI: ami-001085c9389955bb6
         eu-west-2:
-            AMI: ami-005307409c5f6e76c
+            AMI: ami-042dad9866b3cb091
         eu-west-3:
-            AMI: ami-024c0b7d07abc6526
+            AMI: ami-0ef426807a3b85415
         sa-east-1:
-            AMI: ami-0078e33a9103e1e58
+            AMI: ami-0e67d868ae66a74be
         us-east-1:
-            AMI: ami-0254e5972ebcd132c
+            AMI: ami-031507b307be48f22
         us-east-2:
-            AMI: ami-0a0d2004b44b9287c
+            AMI: ami-06b0b1a4f330921e7
         us-gov-west-1:
-            AMI: ami-a842dcc9
+            AMI: ami-cb84e9aa
         us-west-1:
-            AMI: ami-0de5608ca20c07aa2
+            AMI: ami-089408c670f3e10c0
         us-west-2:
-            AMI: ami-093381d21a4fc38d1
+            AMI: ami-0956ec5e79bcaa784
 
     InstanceTypeToOnDemandPrice:
         t2.medium:
@@ -149,7 +151,7 @@ Resources:
             DesiredCapacity: !Ref InitialClusterSize
             LaunchConfigurationName: !Ref ECSLaunchConfiguration
             MaxSize: 2
-            MinSize: 0
+            MinSize: 1
             Tags:
                 - Key: Name
                   Value: ECS-Host
@@ -191,11 +193,8 @@ Resources:
                     #!/bin/bash
                     yum install -y aws-cfn-bootstrap aws-cli jq
                     aws s3 cp s3://${ECSBucket}/ecs-auth.config /etc/ecs/ecs.config
-                    aws s3 cp s3://${ECSBucket}/upsert_record_set.bash /tmp/aws-route53/upsert_record_set.bash
-                    chmod u+x /tmp/aws-route53/upsert_record_set.bash
                     /opt/aws/bin/cfn-init -v --region ${AWS::Region} --stack ${AWS::StackName} --resource ECSLaunchConfiguration
                     /opt/aws/bin/cfn-signal -e $? --region ${AWS::Region} --stack ${AWS::StackName} --resource ECSAutoScalingGroup
-                    /tmp/aws-route53/upsert_record_set.bash ecs-host.internal.${HostedZoneName} A $(curl -s http://169.254.169.254/latest/meta-data/local-ipv4/)
 
                     --==BOUNDARY==--
 

@@ -78,7 +78,7 @@ Parameters:
 
     ServiceDeploymentMinimumHealthyPercent:
         Type: Number
-        Default: 50
+        Default: 100
 
     VPC:
         Description: The VPC that the ECS cluster is deployed to
