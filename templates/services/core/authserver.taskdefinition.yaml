@@ -49,7 +49,6 @@ Parameters:
     RDSMasterPassword:
        Description: Password for Postgres admin user
        Type: String
-       NoEcho: "true"
 
     AuthServerImageVersion:
         Type: String

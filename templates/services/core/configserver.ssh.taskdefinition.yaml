@@ -43,7 +43,6 @@ Parameters:
         Description: The private access key needed for cloning the config repository, used by the ConfigService, shoud be present in the AWS Systems Manager Parameter Store
         Type: 'AWS::SSM::Parameter::Value<String>'
         Default: SpringCloudConfigServerGitPrivateKeySSMParameterName
-        NoEcho: "true"
 
     ConfigServerImageVersion:
         Type: String

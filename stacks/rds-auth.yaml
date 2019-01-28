@@ -42,7 +42,6 @@ Parameters:
         Description: Password for admin user
         Type: String
         Default: SuperSecurePassword
-        NoEcho: "true"
 
     AuthDBStorage:
         Type: Number
