@@ -51,6 +51,11 @@ Parameters:
         Description: The path the load balancer should use for performing the health checks
         Type: String
 
+    HealthCheckGracePeriodSeconds:
+        Description: The period of time, in seconds, that the Amazon ECS service scheduler ignores unhealthy Elastic Load Balancing target health checks after a task has first started.
+        Type: Number
+        Default: 0
+
     Listener:
         Description: The Application Load Balancer listener to register with
         Type: String
@@ -94,6 +99,7 @@ Resources:
             ServiceName: !Ref ServiceName
             Role: !ImportValue "ecs-infra:ECSServiceRole"
             DesiredCount: !Ref DesiredCount
+            HealthCheckGracePeriodSeconds: !Ref HealthCheckGracePeriodSeconds
             DeploymentConfiguration:
                 MaximumPercent: 200
                 MinimumHealthyPercent: 50

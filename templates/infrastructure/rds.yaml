@@ -87,7 +87,6 @@ Parameters:
     MasterPassword:
         Description: Password for admin user
         Type: String
-        NoEcho: "true"
 
     MasterUsername:
         Description: Username for Postgres admin user
