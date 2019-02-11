@@ -30,6 +30,10 @@ Description: >
 
 Parameters:
 
+    Environment:
+        Type: String
+        Default: tst
+
     ECSBucket:
         Type: String
 
@@ -71,8 +75,8 @@ Parameters:
         Type: String
 
 Conditions:
-  EC2HostSSHKeyNameProvided: !Not [ !Equals ["", !Ref EC2HostSSHKeyName]]
-
+    EC2HostSSHKeyNameProvided: !Not [ !Equals ["", !Ref EC2HostSSHKeyName]]
+    IsProd: !Or [!Equals ["prod", !Ref Environment], !Equals ["prd", !Ref Environment]]
 
 Mappings:
 
@@ -167,7 +171,7 @@ Resources:
             KeyName: !If [EC2HostSSHKeyNameProvided, !Ref EC2HostSSHKeyName, !Ref "AWS::NoValue"]
             SecurityGroups:
                 - !Ref SecurityGroup
-            SpotPrice: !FindInMap [InstanceTypeToOnDemandPrice, !Ref ECSHostInstanceType, price]
+            SpotPrice: !If [ IsProd, !Ref "AWS::NoValue", !FindInMap [InstanceTypeToOnDemandPrice, !Ref ECSHostInstanceType, price] ]
             UserData:
                 #Ensures the latest aws helper scripts are installed
                 "Fn::Base64": !Sub |
