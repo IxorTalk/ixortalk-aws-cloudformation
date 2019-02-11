@@ -79,6 +79,7 @@ Resources:
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/infrastructure/ecs-cluster.yaml
             Parameters:
+                Environment: !Ref Environment
                 ECSBucket: !Sub ixortalk-${ProjectName}-ecs-${Environment}
                 ECSHostRole: !GetAtt Roles.Outputs.ECSHostRole
                 HostedZoneName: !Ref HostedZoneName
