@@ -114,6 +114,10 @@ Parameters:
         Type: String
         Default: latest
 
+    UserRegistrationUiImageVersion:
+        Type: String
+        Default: latest
+
     PrometheusImageVersion:
         Type: String
         Default: latest
@@ -310,6 +314,23 @@ Resources:
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: UserRegistrationApiService
 
+    UserRegistrationUiService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-user-registration-ui
+                ContainerPort: 7005
+                HealthCheckPath: /user-registration-ui/actuator/health
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /user-registration-ui/*
+                ListenerRulePriority: 11
+                TaskDefinition: !GetAtt UserRegistrationUiServiceTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: UserRegistrationUiTargetGroup
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: UserRegistrationUiService
+
     NginxExternalService:
         Type: AWS::CloudFormation::Stack
         Properties:
@@ -468,6 +489,16 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 UserRegistrationApiImageVersion: !Ref UserRegistrationApiImageVersion
+
+    UserRegistrationUiServiceTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/user-registration-ui.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                UserRegistrationUiImageVersion: !Ref UserRegistrationUiImageVersion
 
     NginxExternalTaskDefinition:
         Type: AWS::CloudFormation::Stack
