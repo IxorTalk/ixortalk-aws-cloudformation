@@ -241,3 +241,5 @@ Outputs:
 
     Host:
         Value: !GetAtt Database.Endpoint.Address
+        Export:
+            Name: !Join [":", ["rds", !Join ["-", [!Ref DBName, "RDSHost"]]]]
