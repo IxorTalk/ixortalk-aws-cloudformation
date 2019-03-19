@@ -69,6 +69,19 @@ Parameters:
         Description: The name for the S3 bucket to store the access logs for this loadbalancer
         Type: String
 
+    LBCloudWatchLogGroupName:
+      Type: String
+      Default: /aws/alb/access-logs
+
+    LambdaFunctionStoreS3Bucket:
+      Type: String
+      Default: ixortooling-prd-s3-lambda-function-store-public
+
+    S3LogsToCloudWatchLambdaS3Key:
+      Type: String
+      Default: aws-lambda-s3-logs-to-cloudwatch-06b0c5cda86555d95f5939bedeca17830c81ff98.zip
+
+
 Mappings:
     Region2ELBAccountId:
         us-east-1:
@@ -126,6 +139,10 @@ Resources:
                 Rules:
                 - ExpirationInDays: 1
                   Status: Enabled
+            NotificationConfiguration:
+              LambdaConfigurations:
+                  - Function: !GetAtt S3LogsToCloudwatchLambda.Arn
+                    Event: "s3:ObjectCreated:*"
 
     AccessLogS3BucketPolicy:
         Type: AWS::S3::BucketPolicy
@@ -140,6 +157,45 @@ Resources:
                     Resource: !Sub arn:aws:s3:::${AccessLogsS3BucketName}/AWSLogs/${AWS::AccountId}/*
                     Principal:
                       AWS: !FindInMap [Region2ELBAccountId, !Ref 'AWS::Region', AccountId]
+
+
+    S3ToCloudwatchLogsPolicy:
+        Type: AWS::IAM::ManagedPolicy
+        Properties:
+            Description: "Managed policy S3ToCloudwatchLogsPolicy"
+            PolicyDocument:
+              {"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Action": ["s3:Get*", "s3:List*"], "Resource": "*"}, {"Effect": "Allow", "Action": ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents", "logs:DescribeLogStreams", "logs:DescribeLogGroups"], "Resource": "*"}]}
+
+    S3ToCloudwatchLogsRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+              {"Version": "2012-10-17", "Statement": [{"Sid": "", "Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]}
+            ManagedPolicyArns:
+                - !Ref S3ToCloudwatchLogsPolicy
+
+    S3LogsToCloudwatchLambda:
+        Type: AWS::Lambda::Function
+        Properties:
+            Handler: "aws-lambda-s3-logs-to-cloudwatch.handler"
+            Role: !GetAtt S3ToCloudwatchLogsRole.Arn
+            Environment:
+                Variables:
+                    LOGGROUP_NAME: !Ref LBCloudWatchLogGroupName
+                    LOGSTREAM_NAME: !Ref LoadBalancerName
+            Code:
+                S3Bucket: !Ref LambdaFunctionStoreS3Bucket
+                S3Key: !Ref S3LogsToCloudWatchLambdaS3Key
+            Runtime: nodejs8.10
+
+    S3LogsToCloudwatchLambdaInvokePermission:
+        Type: AWS::Lambda::Permission
+        Properties:
+            Action: lambda:InvokeFunction
+            FunctionName: !Ref S3LogsToCloudwatchLambda
+            Principal: "s3.amazonaws.com"
+            SourceAccount: !Ref AWS::AccountId
+            SourceArn: !Sub arn:aws:s3:::${AccessLogsS3BucketName}
 
     LoadBalancer:
         Type: AWS::ElasticLoadBalancingV2::LoadBalancer
