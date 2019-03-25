@@ -33,10 +33,10 @@ export PROJECT_NAME=$1
 export ENV=$2
 export STATIC_CONTENT_FOLDER=$3
 
-bucket=ixortalk-${PROJECT_NAME}-assets-${ENV}
+bucket=${PROJECT_NAME}-${ENV}-static-content
 
 
-policy=$(eval "echo '{\"Version\": \"2012-10-17\",\"Statement\": [{\"Effect\": \"Allow\",\"Action\": [\"s3:GetObject\"],\"Resource\": [\"arn:aws:s3:::ixortalk-${PROJECT_NAME}-assets-${ENV}/*\"],\"Principal\": \"*\"}]}'")
+policy=$(eval "echo '{\"Version\": \"2012-10-17\",\"Statement\": [{\"Effect\": \"Allow\",\"Action\": [\"s3:GetObject\"],\"Resource\": [\"arn:aws:s3:::${bucket}/*\"],\"Principal\": \"*\"}]}'")
 
 aws s3api create-bucket --bucket ${bucket} --create-bucket-configuration LocationConstraint=eu-central-1
 aws s3api wait bucket-exists --bucket ${bucket}
