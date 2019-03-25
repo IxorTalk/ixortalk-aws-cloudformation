@@ -56,7 +56,7 @@ Resources:
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/infrastructure/cloudfront.yaml
             Parameters:
-                AssetsBucketName: !Sub ixortalk-${ProjectName}-assets-${Environment}
+                AssetsBucketName: !Sub ${ProjectName}-${Environment}-static-content
                 CertificateARN: !Ref CloudFrontCertificateARN
                 DistributionAlias: !Join
                   - "."

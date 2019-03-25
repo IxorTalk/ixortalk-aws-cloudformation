@@ -34,7 +34,7 @@ Optional:
 
 #### Static content S3 Bucket
 
-Create an S3 bucket containing static assets to be used by CloudFront:
+Create an S3 bucket containing static assets to be used by CloudFront, example script:
 
 ```
 ./scripts/one-time/create-static-content-s3-bucket.sh $PROJECT_NAME $ENV <folder_containing_static_resources_to_upload>
