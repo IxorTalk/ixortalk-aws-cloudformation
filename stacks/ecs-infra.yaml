@@ -135,7 +135,8 @@ Resources:
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/infrastructure/roles.yaml
             Parameters:
-                ECSBucketArn: !Sub arn:aws:s3:::ixortalk-${ProjectName}-ecs-${Environment}
+                ProjectName: !Ref ProjectName
+                Environment: !Ref Environment
 
 
                 

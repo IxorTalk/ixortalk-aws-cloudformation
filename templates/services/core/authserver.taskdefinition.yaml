@@ -27,6 +27,15 @@ Description: "Authentication Service - Core component to handle all authenticati
 
 Parameters:
 
+    Environment:
+      Description: The target environment (tst/stg/prd)
+      Type: String
+      Default: tst
+
+    ProjectName:
+      Type: String
+      Default: demo
+
     SpringCloudConfigLabel:
        Description: The branch of the config environment to use
        Type: String
@@ -55,10 +64,20 @@ Parameters:
 
 Resources:
 
-    TaskDefinition:
+  ProfilePictureS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${ProjectName}-${Environment}-profile-pictures
+      PublicAccessBlockConfiguration:
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+
+  TaskDefinition:
         Type: AWS::ECS::TaskDefinition
         Properties:
             Family: ixortalk-authserver
+            TaskRoleArn: !ImportValue "ecs-infra:S3FullAccessServiceRoleArn"
             ContainerDefinitions:
                 - Name: ixortalk-authserver
                   Image: !Sub ixortalk/ixortalk-authserver:${AuthServerImageVersion}
@@ -86,7 +105,7 @@ Resources:
                         awslogs-group: authserver-logs
                         awslogs-region: !Ref AWS::Region
 
-    CloudWatchLogsGroup:
+  CloudWatchLogsGroup:
         Type: AWS::Logs::LogGroup
         Properties:
             LogGroupName: authserver-logs
