@@ -62,4 +62,6 @@ Resources:
                     Subnets: !ImportValue "vpc:PrivateSubnets"
                     VPC: !ImportValue "vpc:VPC"
                     Storage: !Ref AuthDBStorage
+                    ProjectName: !Ref ProjectName
+                    Environment: !Ref Environment
 

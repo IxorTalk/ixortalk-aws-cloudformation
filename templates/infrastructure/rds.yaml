@@ -103,7 +103,9 @@ Parameters:
 
     ProjectName:
         Type: String
-        Default: ":default"
+
+    Environment:
+        Type: String
 
     SecurityGroupDescription:
         Type: String
@@ -174,6 +176,8 @@ Conditions:
         !Not [!Equals [-1, !Ref DBPort]]
     HasSpecifiedDBName:
         !Not [!Equals ["defaultDB", !Ref DBName]]
+    IsProd: !Or [!Equals ["prod", !Ref Environment], !Equals ["prd", !Ref Environment]]
+
 
 Resources:
 
@@ -208,8 +212,8 @@ Resources:
         Type: AWS::RDS::DBInstance
         Properties:
             Tags:
-                - Key: "stop_or_start_with_cfn_stacks"
-                  Value: "yes"
+                - Key: "ixortalk:ass:rds-include"
+                  Value: !If [ IsProd, "no", "yes" ]
             AllocatedStorage: !Ref Storage
             BackupRetentionPeriod: !Ref BackupRetention
             DBName: !Ref DBName
