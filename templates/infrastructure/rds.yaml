@@ -212,7 +212,7 @@ Resources:
         Type: AWS::RDS::DBInstance
         Properties:
             Tags:
-                - Key: "ixortalk:ass:rds-include"
+                - Key: "ixortalk:ass:rds:include"
                   Value: !If [ IsProd, "no", "yes" ]
             AllocatedStorage: !Ref Storage
             BackupRetentionPeriod: !Ref BackupRetention
