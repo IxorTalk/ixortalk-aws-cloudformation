@@ -133,6 +133,7 @@ Resources:
 
     AccessLogS3Bucket:
         Type: AWS::S3::Bucket
+        DependsOn: S3LogsToCloudwatchLambda
         Properties:
             BucketName: !Ref AccessLogsS3BucketName
             LifecycleConfiguration:
@@ -177,6 +178,7 @@ Resources:
 
     S3LogsToCloudwatchLambda:
         Type: AWS::Lambda::Function
+        DependsOn: S3ToCloudwatchLogsRole
         Properties:
             Handler: "aws-lambda-s3-logs-to-cloudwatch.handler"
             Role: !GetAtt S3ToCloudwatchLogsRole.Arn
