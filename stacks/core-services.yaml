@@ -432,6 +432,8 @@ Resources:
                 LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
                 JDBCConnectionString: !ImportValue "rds:AuthRDS-JDBCConnectionString"
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                ProjectName: !Ref ProjectName
+                Environment: !Ref Environment
                 SpringProfilesActive: !Ref SpringProfilesActive
                 AuthServerImageVersion: !Ref AuthServerImageVersion
                 RDSMasterPassword: !Ref AuthDBMasterPassword
