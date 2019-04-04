@@ -62,12 +62,19 @@ Parameters:
     AuthServerImageVersion:
         Type: String
 
+
+Conditions:
+  IsProd: !Or [!Equals ["prod", !Ref Environment], !Equals ["prd", !Ref Environment]]
+
 Resources:
 
   ProfilePictureS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub ${ProjectName}-${Environment}-profile-pictures
+      Tags:
+          - Key: "ixortalk:ass:s3:clean-bucket-on-stop"
+            Value: !If [ IsProd, "no", "yes" ]
       PublicAccessBlockConfiguration:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
