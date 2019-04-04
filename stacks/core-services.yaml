@@ -446,6 +446,7 @@ Resources:
                 ProjectName: !Ref ProjectName
                 Environment: !Ref Environment
                 S3TemplatesBucketName: !Ref S3TemplatesBucketName
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringCloudConfigServerURI: !Ref SpringCloudConfigServerURI
                 SpringProfilesActive: !Ref SpringProfilesActive
                 ConfigServerImageVersion: !Ref ConfigServerImageVersion

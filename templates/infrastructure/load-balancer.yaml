@@ -146,6 +146,7 @@ Resources:
 
     AccessLogS3BucketPolicy:
         Type: AWS::S3::BucketPolicy
+        DependsOn: AccessLogS3Bucket
         Properties:
             Bucket: !Ref AccessLogsS3BucketName
             PolicyDocument:
@@ -199,7 +200,7 @@ Resources:
 
     LoadBalancer:
         Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-        DependsOn: AccessLogS3Bucket
+        DependsOn: AccessLogS3BucketPolicy
         Properties:
             Name: !Ref LoadBalancerName
             Scheme: !Ref Scheme

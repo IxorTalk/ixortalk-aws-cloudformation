@@ -26,6 +26,10 @@ AWSTemplateFormatVersion: "2010-09-09"
 
 Parameters:
 
+    SpringCloudConfigLabel:
+      Description: The branch of the config environment to use
+      Type: String
+
     GitHost:
         Type: String
         AllowedValues:
@@ -86,6 +90,8 @@ Resources:
                         Value: !Ref SpringProfilesActive
                       - Name: "SPRING_CLOUD_CONFIG_SERVER_GIT_URI"
                         Value: !Ref SpringCloudConfigServerURI
+                      - Name: "SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL"
+                        Value: !Ref SpringCloudConfigLabel
                       - Name: "SPRING_CLOUD_CONFIG_SERVER_GIT_IGNORE_LOCAL_SSH_SETTINGS"
                         Value: true
                       - Name: "SPRING_CLOUD_CONFIG_SERVER_GIT_HOST_KEY"

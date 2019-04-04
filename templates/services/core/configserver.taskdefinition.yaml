@@ -26,6 +26,10 @@ AWSTemplateFormatVersion: "2010-09-09"
 
 Parameters:
 
+    SpringCloudConfigLabel:
+        Description: The branch of the config environment to use
+        Type: String
+
     Environment:
         Description: The target environment (tst/stg/prd)
         Type: String
@@ -71,6 +75,7 @@ Resources:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/configserver.ssh.taskdefinition.yaml
             Parameters:
                 SpringCloudConfigServerURI: !Ref SpringCloudConfigServerURI
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 ConfigServerImageVersion: !Ref ConfigServerImageVersion
                 GitHost: !If [ UseBitbucketSsh, Bitbucket, Github ]
@@ -87,6 +92,7 @@ Resources:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/configserver.https.taskdefinition.yaml
             Parameters:
                 SpringCloudConfigServerURI: !Ref SpringCloudConfigServerURI
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 ConfigServerImageVersion: !Ref ConfigServerImageVersion
                 ContainerPort: 8899
