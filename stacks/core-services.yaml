@@ -222,10 +222,10 @@ Resources:
                 Cluster: !ImportValue "ecs-infra:ECS-Cluster"
                 ContainerName: ixortalk-authserver
                 ContainerPort: 9999
-                HealthCheckPath: /uaa-internal/actuator/health
+                HealthCheckPath: /uaa-thirdparty/actuator/health
                 HealthCheckGracePeriodSeconds: 60
                 Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
-                ListenerPath: /uaa-internal/*
+                ListenerPath: /uaa-thirdparty/*
                 ListenerRulePriority: 5
                 TaskDefinition: !GetAtt AuthserverTaskDefinition.Outputs.TaskDefinition
                 TargetGroupName: AuthTG
@@ -240,10 +240,10 @@ Resources:
                 Cluster: !ImportValue "ecs-infra:ECS-Cluster"
                 ContainerName: ixortalk-authorization-server
                 ContainerPort: 8007
-                HealthCheckPath: /authorization-server/actuator/health
+                HealthCheckPath: /uaa/actuator/health
                 HealthCheckGracePeriodSeconds: 60
                 Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
-                ListenerPath: /authorization-server/*
+                ListenerPath: /uaa/*
                 ListenerRulePriority: 6
                 TaskDefinition: !GetAtt AuthorizationServerTaskDefinition.Outputs.TaskDefinition
                 TargetGroupName: AuthorizationServerTG
