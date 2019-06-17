@@ -47,6 +47,18 @@ Parameters:
         Type: Number
         Default: 5
 
+    RDSCustomResourcePSQLDbS3Bucket:
+        Type: String
+        Default: ixortooling-prd-s3-lambda-function-store-public
+
+    RDSCustomResourcePSQLDbS3Key:
+        Type: String
+        Default: aws-lambda-manage-pgsql-dbs-17ae2642d4dc6aeee84dbaa4dd7edc09a50d4b43.zip
+
+    IxorTalkAuthorizationServerDBPassword:
+        Type: String
+        Default: SuperSecurePassword
+
 
 Resources:
 
@@ -65,3 +77,45 @@ Resources:
                     ProjectName: !Ref ProjectName
                     Environment: !Ref Environment
 
+        RDSCustomResourcePSQLDb:
+            Type: AWS::CloudFormation::Stack
+            Properties:
+                TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/infrastructure/rds-custom-resource-psql-db.yaml
+                Parameters:
+                    RDSCustomResourcePSQLDbS3Bucket: !Ref RDSCustomResourcePSQLDbS3Bucket
+                    RDSCustomResourcePSQLDbS3Key: !Ref RDSCustomResourcePSQLDbS3Key
+
+        AuthorizationServerDB:
+            Type: Custom::PgSqlDB
+            DependsOn:
+                - RDSCustomResourcePSQLDb
+            Properties:
+                loglevel: "DEBUG"
+
+                ServiceToken: !GetAtt RDSCustomResourcePSQLDb.Outputs.serviceToken
+
+                DBHost: !ImportValue "rds:AuthDatabase-RDSHost"
+                DBRootUser: "root"
+                DBRootPassword: !Ref AuthDBMasterPassword
+
+                DBToCreate: "IxorTalkAuthorizationServerDB"
+                DBUser: "ixortalk_authorization_server"
+                DBPassword: !Ref IxorTalkAuthorizationServerDBPassword
+
+
+Outputs:
+
+    AuthorizationServerDBJDBCConnectionString:
+        Value: !GetAtt AuthorizationServerDB.JDBCConnectionString
+        Export:
+            Name: "rds:AuthorizationServerDB-JDBCConnectionString"
+
+    AuthorizationServerDBJDBCUsername:
+        Value: !GetAtt AuthorizationServerDB.JDBCUsername
+        Export:
+            Name: "rds:AuthorizationServerDB-JDBCUsername"
+
+    AuthorizationServerDBJDBCPassword:
+        Value: !GetAtt AuthorizationServerDB.JDBCPassword
+        Export:
+            Name: "rds:AuthorizationServerDB-JDBCPassword"
