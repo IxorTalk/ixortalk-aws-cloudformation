@@ -302,6 +302,24 @@ Resources:
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: GrafanaService
 
+    ImageService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-image-service
+                ContainerPort: 8006
+                HealthCheckPath: /uaa-thirdparty/actuator/health
+                HealthCheckGracePeriodSeconds: 60
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /uaa-thirdparty/*
+                ListenerRulePriority: 5
+                TaskDefinition: !GetAtt ImageServiceTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: AuthTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: ImageService
+
     MailingService:
         Type: AWS::CloudFormation::Stack
         Properties:
@@ -509,6 +527,16 @@ Resources:
                 SpringProfilesActive: !Ref SpringProfilesActive
                 NginxImageVersion: !Ref NginxImageVersion
                 GrafanaImageVersion: !Ref GrafanaImageVersion
+
+    ImageServiceTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/image-service.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                ImageServiceImageVersion: !Ref ImageServiceImageVersion
 
     MailingServiceTaskDefinition:
         Type: AWS::CloudFormation::Stack
