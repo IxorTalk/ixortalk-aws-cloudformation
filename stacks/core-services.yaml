@@ -310,10 +310,10 @@ Resources:
                 Cluster: !ImportValue "ecs-infra:ECS-Cluster"
                 ContainerName: ixortalk-image-service
                 ContainerPort: 8006
-                HealthCheckPath: /uaa-thirdparty/actuator/health
+                HealthCheckPath: /image-service/actuator/health
                 HealthCheckGracePeriodSeconds: 60
                 Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
-                ListenerPath: /uaa-thirdparty/*
+                ListenerPath: /image-service/*
                 ListenerRulePriority: 5
                 TaskDefinition: !GetAtt ImageServiceTaskDefinition.Outputs.TaskDefinition
                 TargetGroupName: AuthTG
