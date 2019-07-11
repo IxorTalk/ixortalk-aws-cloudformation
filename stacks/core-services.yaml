@@ -102,6 +102,10 @@ Parameters:
         Type: String
         Default: latest
 
+    ImageServiceImageVersion:
+        Type: String
+        Default: latest
+
     NginxImageVersion:
         Type: String
         Default: latest
