@@ -27,6 +27,15 @@ Description: "Image Service - Storage for images."
 
 Parameters:
 
+    Environment:
+       Description: The target environment (tst/stg/prd)
+       Type: String
+       Default: tst
+
+    ProjectName:
+       Type: String
+       Default: demo
+
     SpringCloudConfigLabel:
        Description: The branch of the config environment to use
        Type: String
@@ -40,7 +49,21 @@ Parameters:
     ImageServiceImageVersion:
         Type: String
 
+Conditions:
+    IsProd: !Or [!Equals ["prod", !Ref Environment], !Equals ["prd", !Ref Environment]]
+
 Resources:
+
+    ImageS3Bucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            BucketName: !Sub ${ProjectName}-${Environment}-image-service
+            Tags:
+                - Key: "ixortalk:ass:s3:clean-bucket-on-stop"
+                  Value: !If [ IsProd, "no", "yes" ]
+            PublicAccessBlockConfiguration:
+                IgnorePublicAcls: true
+                RestrictPublicBuckets: true
 
     TaskDefinition:
         Type: AWS::ECS::TaskDefinition
