@@ -540,6 +540,8 @@ Resources:
                 LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
+                ProjectName: !Ref ProjectName
+                Environment: !Ref Environment
                 ImageServiceImageVersion: !Ref ImageServiceImageVersion
 
     MailingServiceTaskDefinition:

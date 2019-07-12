@@ -69,6 +69,7 @@ Resources:
         Type: AWS::ECS::TaskDefinition
         Properties:
             Family: ixortalk-image-service
+            TaskRoleArn: !ImportValue "ecs-infra:S3FullAccessServiceRoleArn"
             ContainerDefinitions:
                 - Name: ixortalk-image-service
                   Image: !Sub ixortalk/ixortalk-image-service:${ImageServiceImageVersion}
