@@ -72,6 +72,7 @@ Resources:
                     MasterPassword: !Ref AuthDBMasterPassword
                     SourceSecurityGroup: !ImportValue "vpc:ECSHostSecurityGroup"
                     Subnets: !ImportValue "vpc:PrivateSubnets"
+                    MultiAZ: true
                     VPC: !ImportValue "vpc:VPC"
                     Storage: !Ref AuthDBStorage
                     ProjectName: !Ref ProjectName
