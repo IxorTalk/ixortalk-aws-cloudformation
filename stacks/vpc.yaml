@@ -98,6 +98,6 @@ Resources:
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/infrastructure/efs.yaml
             Parameters:
-                PrivateSubnet1: !ImportValue "vpc:PrivateSubnet1"
-                PrivateSubnet2: !ImportValue "vpc:PrivateSubnet2"
-                EFSMountTargetSecurityGroup: !ImportValue "vpc:EFSMountTargetSecurityGroup"
+                PrivateSubnet1: !GetAtt VPC.Outputs.PrivateSubnet1
+                PrivateSubnet2: !GetAtt VPC.Outputs.PrivateSubnet2
+                EFSMountTargetSecurityGroup: !GetAtt SecurityGroups.Outputs.EFSMountTargetSecurityGroup
