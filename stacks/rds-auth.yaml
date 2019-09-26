@@ -95,7 +95,7 @@ Resources:
 
                 ServiceToken: !GetAtt RDSCustomResourcePSQLDb.Outputs.serviceToken
 
-                DBHost: !ImportValue "rds:AuthDatabase-RDSHost"
+                DBHost: !GetAtt RDSAuth.Outputs.Host
                 DBRootUser: "root"
                 DBRootPassword: !Ref AuthDBMasterPassword
 
