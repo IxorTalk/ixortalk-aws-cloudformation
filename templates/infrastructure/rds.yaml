@@ -79,7 +79,6 @@ Parameters:
     InstanceType:
         Description: Instance type to use for RDS database
         Type: String
-        Default: db.t2.small
 
     JDBCConnectionStringExportName:
         Type: String
