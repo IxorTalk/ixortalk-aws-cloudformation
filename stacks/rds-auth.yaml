@@ -59,6 +59,11 @@ Parameters:
         Type: String
         Default: SuperSecurePassword
 
+    DBInstanceType:
+        Description: Instance type to use for RDS database
+        Type: String
+        Default: db.t2.small
+
 
 Resources:
 
@@ -73,6 +78,7 @@ Resources:
                     SourceSecurityGroup: !ImportValue "vpc:ECSHostSecurityGroup"
                     Subnets: !ImportValue "vpc:PrivateSubnets"
                     MultiAZ: true
+                    InstanceType: !Ref DBInstanceType
                     VPC: !ImportValue "vpc:VPC"
                     Storage: !Ref AuthDBStorage
                     ProjectName: !Ref ProjectName
