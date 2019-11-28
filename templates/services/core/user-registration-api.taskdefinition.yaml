@@ -26,6 +26,13 @@ AWSTemplateFormatVersion: "2010-09-09"
 
 Parameters:
 
+    ProjectName:
+        Type: String
+
+    Environment:
+        Description: The target environment (tst/stg/prd)
+        Type: String
+
     SpringCloudConfigLabel:
        Description: The branch of the config environment to use
        Type: String
@@ -39,7 +46,28 @@ Parameters:
     UserRegistrationApiImageVersion:
         Type: String
 
+    IncludeProfilePictureBucket:
+        Type: String
+        AllowedValues:
+          - true
+          - false
+
+Conditions:
+      IsProd: !Or [!Equals ["prod", !Ref Environment], !Equals ["prd", !Ref Environment]]
+      IncludeProfilePictureBucketCondition: !Equals ["true", !Ref IncludeProfilePictureBucket]
+
 Resources:
+
+    ProfilePictureS3Bucket:
+        Type: AWS::S3::Bucket
+        Condition: IncludeProfilePictureBucketCondition
+        Properties:
+            BucketName: !Sub ${ProjectName}-${Environment}-user-profile-pictures
+            Tags:
+                - Key: "ixortalk:ass:s3:clean-bucket-on-stop"
+                  Value: !If [ IsProd, "no", "yes" ]
+            AccessControl: PublicRead
+
 
     TaskDefinition:
         Type: AWS::ECS::TaskDefinition

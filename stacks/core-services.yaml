@@ -146,6 +146,12 @@ Parameters:
         Type: String
         Default: 'false'
 
+    IncludeProfilePictureBucketWithUserRegistrationService:
+        Type: String
+        Default: false
+        AllowedValues:
+            - true
+            - false
 Resources:
 
     AlertManagerService:
@@ -562,7 +568,10 @@ Resources:
                 LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
+                ProjectName: !Ref ProjectName
+                Environment: !Ref Environment
                 UserRegistrationApiImageVersion: !Ref UserRegistrationApiImageVersion
+                IncludeProfilePictureBucket: !Ref IncludeProfilePictureBucketWithUserRegistrationService
 
     UserRegistrationUiServiceTaskDefinition:
         Type: AWS::CloudFormation::Stack
