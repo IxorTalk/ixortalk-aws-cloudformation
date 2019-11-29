@@ -152,6 +152,8 @@ Parameters:
         AllowedValues:
             - true
             - false
+
+
 Resources:
 
     AlertManagerService:
