@@ -22,6 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
+cd $(dirname ${0})
 
 if [ -z ${1} ]; then
     bucket="s3://ixortalktooling-prd-aws-cloudformation"
@@ -35,13 +36,13 @@ echo "Refreshing bucket ${bucket}"
 
 aws s3 rm ${bucket} --recursive
 
-aws s3 cp ../ixortalk-aws-cloudformation/stacks/cloudfront.yaml ${bucket} ${extra_opts}
-aws s3 cp ../ixortalk-aws-cloudformation/stacks/vpc.yaml ${bucket} ${extra_opts}
-aws s3 cp ../ixortalk-aws-cloudformation/stacks/rds-auth.yaml ${bucket} ${extra_opts}
-aws s3 cp ../ixortalk-aws-cloudformation/stacks/ecs-infra.yaml ${bucket} ${extra_opts}
-aws s3 cp ../ixortalk-aws-cloudformation/stacks/core-services.yaml ${bucket}/ ${extra_opts}
-aws s3 cp ../ixortalk-aws-cloudformation/stacks/iot-services.yaml ${bucket}/ ${extra_opts}
+aws s3 cp ../stacks/cloudfront.yaml ${bucket} ${extra_opts}
+aws s3 cp ../stacks/vpc.yaml ${bucket} ${extra_opts}
+aws s3 cp ../stacks/rds-auth.yaml ${bucket} ${extra_opts}
+aws s3 cp ../stacks/ecs-infra.yaml ${bucket} ${extra_opts}
+aws s3 cp ../stacks/core-services.yaml ${bucket}/ ${extra_opts}
+aws s3 cp ../stacks/iot-services.yaml ${bucket}/ ${extra_opts}
 
-aws s3 cp ../ixortalk-aws-cloudformation/templates/infrastructure/ ${bucket}/infrastructure/ --recursive ${extra_opts}
+aws s3 cp ../templates/infrastructure/ ${bucket}/infrastructure/ --recursive ${extra_opts}
 
-aws s3 cp ../ixortalk-aws-cloudformation/templates/services/ ${bucket}/services/ --recursive ${extra_opts}
+aws s3 cp ../templates/services/ ${bucket}/services/ --recursive ${extra_opts}
