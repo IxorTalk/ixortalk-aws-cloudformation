@@ -86,14 +86,6 @@ Parameters:
         Type: String
         Default: latest
 
-    AuthServerImageVersion:
-        Type: String
-        Default: latest
-
-    AuthorizationServerImageVersion:
-        Type: String
-        Default: latest
-
     ConfigServerImageVersion:
         Type: String
         Default: latest
@@ -225,42 +217,6 @@ Resources:
                     TargetGroupName: AssetmgmtUITG
                     VPC: !ImportValue "vpc:VPC"
                     ServiceName: AssetMgmtUIService
-
-    AuthService:
-        Type: AWS::CloudFormation::Stack
-        Properties:
-            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
-            Parameters:
-                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
-                ContainerName: ixortalk-authserver
-                ContainerPort: 9999
-                HealthCheckPath: /uaa-thirdparty/actuator/health
-                HealthCheckGracePeriodSeconds: 60
-                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
-                ListenerPath: /uaa-thirdparty/*
-                ListenerRulePriority: 5
-                TaskDefinition: !GetAtt AuthserverTaskDefinition.Outputs.TaskDefinition
-                TargetGroupName: AuthTG
-                VPC: !ImportValue "vpc:VPC"
-                ServiceName: AuthService
-
-    AuthorizationService:
-        Type: AWS::CloudFormation::Stack
-        Properties:
-            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
-            Parameters:
-                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
-                ContainerName: ixortalk-authorization-server
-                ContainerPort: 8007
-                HealthCheckPath: /uaa/actuator/health
-                HealthCheckGracePeriodSeconds: 60
-                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
-                ListenerPath: /uaa/*
-                ListenerRulePriority: 6
-                TaskDefinition: !GetAtt AuthorizationServerTaskDefinition.Outputs.TaskDefinition
-                TargetGroupName: AuthorizationServerTG
-                VPC: !ImportValue "vpc:VPC"
-                ServiceName: AuthorizationService
 
     ConfigService:
         Type: AWS::CloudFormation::Stack
@@ -475,35 +431,6 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 AssetMgmtUiImageVersion: !Ref AssetMgmtUiImageVersion
-
-    AuthserverTaskDefinition:
-        Type: AWS::CloudFormation::Stack
-        Properties:
-            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/authserver.taskdefinition.yaml
-            Parameters:
-                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
-                JDBCConnectionString: !ImportValue "rds:AuthRDS-JDBCConnectionString"
-                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
-                ProjectName: !Ref ProjectName
-                Environment: !Ref Environment
-                SpringProfilesActive: !Ref SpringProfilesActive
-                AuthServerImageVersion: !Ref AuthServerImageVersion
-                RDSMasterPassword: !Ref AuthDBMasterPassword
-
-    AuthorizationServerTaskDefinition:
-        Type: AWS::CloudFormation::Stack
-        Properties:
-            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/authorization-server.taskdefinition.yaml
-            Parameters:
-                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
-                JDBCConnectionString: !ImportValue "rds:AuthorizationServerDB-JDBCConnectionString"
-                JDBCUsername: !ImportValue "rds:AuthorizationServerDB-JDBCUsername"
-                JDBCPassword: !ImportValue "rds:AuthorizationServerDB-JDBCPassword"
-                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
-                ProjectName: !Ref ProjectName
-                Environment: !Ref Environment
-                SpringProfilesActive: !Ref SpringProfilesActive
-                AuthorizationServerImageVersion: !Ref AuthorizationServerImageVersion
 
     ConfigserverTaskDefinition:
         Type: AWS::CloudFormation::Stack
