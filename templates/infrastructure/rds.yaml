@@ -80,9 +80,6 @@ Parameters:
         Description: Instance type to use for RDS database
         Type: String
 
-    JDBCConnectionStringExportName:
-        Type: String
-
     MasterPassword:
         Description: Password for admin user
         Type: String
@@ -236,13 +233,17 @@ Outputs:
                 Address: !GetAtt Database.Endpoint.Address,
                 Port: !GetAtt Database.Endpoint.Port,
                 DBName: !Ref DBName }
-        Export:
-          Name: !Ref JDBCConnectionStringExportName
 
     DBName:
         Value: !Ref DBName
 
+    # TODO this export can be removed when no longer in use
     Host:
         Value: !GetAtt Database.Endpoint.Address
         Export:
-            Name: !Join [":", ["rds", !Join ["-", [!Ref DBName, "RDSHost"]]]]
+            Name: !Sub rds:${DBName}-RDSHost
+
+    RDSHost:
+        Value: !GetAtt Database.Endpoint.Address
+        Export:
+            Name: rds:RDSHost

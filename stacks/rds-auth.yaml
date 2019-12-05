@@ -38,12 +38,12 @@ Parameters:
         Type: String
         Default: "ixortalktooling-prd-aws-cloudformation"
 
-    AuthDBMasterPassword:
+    RDSMasterPassword:
         Description: Password for admin user
         Type: String
         Default: SuperSecurePassword
 
-    AuthDBStorage:
+    RDSStorage:
         Type: Number
         Default: 5
 
@@ -54,10 +54,6 @@ Parameters:
     RDSCustomResourcePSQLDbS3Key:
         Type: String
         Default: aws-lambda-manage-pgsql-dbs-17ae2642d4dc6aeee84dbaa4dd7edc09a50d4b43.zip
-
-    IxorTalkAuthorizationServerDBPassword:
-        Type: String
-        Default: SuperSecurePassword
 
     DBInstanceType:
         Description: Instance type to use for RDS database
@@ -72,15 +68,14 @@ Resources:
             Properties:
                 TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/infrastructure/rds.yaml
                 Parameters:
-                    JDBCConnectionStringExportName: "rds:AuthRDS-JDBCConnectionString"
                     DBName: AuthDatabase
-                    MasterPassword: !Ref AuthDBMasterPassword
+                    MasterPassword: !Ref RDSMasterPassword
                     SourceSecurityGroup: !ImportValue "vpc:ECSHostSecurityGroup"
                     Subnets: !ImportValue "vpc:PrivateSubnets"
                     MultiAZ: true
                     InstanceType: !Ref DBInstanceType
                     VPC: !ImportValue "vpc:VPC"
-                    Storage: !Ref AuthDBStorage
+                    Storage: !Ref RDSStorage
                     ProjectName: !Ref ProjectName
                     Environment: !Ref Environment
 
@@ -91,38 +86,3 @@ Resources:
                 Parameters:
                     RDSCustomResourcePSQLDbS3Bucket: !Ref RDSCustomResourcePSQLDbS3Bucket
                     RDSCustomResourcePSQLDbS3Key: !Ref RDSCustomResourcePSQLDbS3Key
-
-        AuthorizationServerDB:
-            Type: Custom::PgSqlDB
-            DependsOn:
-                - RDSCustomResourcePSQLDb
-            Properties:
-                loglevel: "DEBUG"
-
-                ServiceToken: !GetAtt RDSCustomResourcePSQLDb.Outputs.serviceToken
-
-                DBHost: !GetAtt RDSAuth.Outputs.Host
-                DBRootUser: "root"
-                DBRootPassword: !Ref AuthDBMasterPassword
-
-                DBToCreate: "IxorTalkAuthorizationServerDB"
-                DBUser: "ixortalk_authorization_server"
-                DBPassword: !Ref IxorTalkAuthorizationServerDBPassword
-
-
-Outputs:
-
-    AuthorizationServerDBJDBCConnectionString:
-        Value: !GetAtt AuthorizationServerDB.JDBCConnectionString
-        Export:
-            Name: "rds:AuthorizationServerDB-JDBCConnectionString"
-
-    AuthorizationServerDBJDBCUsername:
-        Value: !GetAtt AuthorizationServerDB.JDBCUsername
-        Export:
-            Name: "rds:AuthorizationServerDB-JDBCUsername"
-
-    AuthorizationServerDBJDBCPassword:
-        Value: !GetAtt AuthorizationServerDB.JDBCPassword
-        Export:
-            Name: "rds:AuthorizationServerDB-JDBCPassword"
