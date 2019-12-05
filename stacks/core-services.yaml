@@ -53,7 +53,7 @@ Parameters:
         Type: String
         Default: "ixortalktooling-prd-aws-cloudformation"
 
-    AuthDBMasterPassword:
+    RDSMasterPassword:
         Description: Password for admin user
         Type: String
         Default: SuperSecurePassword
