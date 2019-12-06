@@ -73,6 +73,7 @@ Resources:
         Type: AWS::ECS::TaskDefinition
         Properties:
             Family: ixortalk-user-registration-api
+            TaskRoleArn: !ImportValue "ecs-infra:S3FullAccessServiceRoleArn"
             ContainerDefinitions:
                 - Name: ixortalk-user-registration-api
                   Image: !Sub ixortalk/ixortalk-user-registration-api:${UserRegistrationApiImageVersion}
