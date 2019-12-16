@@ -145,6 +145,10 @@ Parameters:
             - true
             - false
 
+    NumberOfEC2InstancesInTheECSCluster:
+        Default: 1
+        Type: Number
+        MinValue: 0
 
 Resources:
 
@@ -166,6 +170,7 @@ Resources:
                 ServiceName: AlertManagerService
                 ServiceDeploymentMaximumPercent: 100
                 ServiceDeploymentMinimumHealthyPercent: 0
+                DesiredCount: 1
 
     AssetMgmtService:
         Type: AWS::CloudFormation::Stack
@@ -183,6 +188,7 @@ Resources:
                 TargetGroupName: AssetmgmtTG
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: AssetMgmtService
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
     AssetStateService:
         Type: AWS::CloudFormation::Stack
@@ -200,6 +206,7 @@ Resources:
                 TargetGroupName: AssetStateTG
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: AssetStateService
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
     AssetMgmtUIService:
             Type: AWS::CloudFormation::Stack
@@ -217,6 +224,7 @@ Resources:
                     TargetGroupName: AssetmgmtUITG
                     VPC: !ImportValue "vpc:VPC"
                     ServiceName: AssetMgmtUIService
+                    DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
     ConfigService:
         Type: AWS::CloudFormation::Stack
@@ -226,7 +234,7 @@ Resources:
                 Cluster: !ImportValue "ecs-infra:ECS-Cluster"
                 ContainerName: ixortalk-configserver
                 ContainerPort: 8899
-                DesiredCount: 2
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
                 HealthCheckPath: /config/actuator/health
                 Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
                 ListenerPath: /config/*
@@ -252,6 +260,8 @@ Resources:
                 TargetGroupName: GatewayTG
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: GatewayService
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
+                TargetGroupStickinessEnabled: true
 
     GrafanaService:
         Type: AWS::CloudFormation::Stack
@@ -269,6 +279,7 @@ Resources:
                 TargetGroupName: GrafanaTG
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: GrafanaService
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
     ImageService:
         Type: AWS::CloudFormation::Stack
@@ -287,6 +298,7 @@ Resources:
                 TargetGroupName: ImageServiceTG
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: ImageService
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
     MailingService:
         Type: AWS::CloudFormation::Stack
@@ -304,6 +316,7 @@ Resources:
                 TargetGroupName: MailingServiceTG
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: MailingService
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
     UserRegistrationApiService:
         Type: AWS::CloudFormation::Stack
@@ -321,6 +334,7 @@ Resources:
                 TargetGroupName: UserRegistrationApiTargetGroup
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: UserRegistrationApiService
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
     UserRegistrationUiService:
         Type: AWS::CloudFormation::Stack
@@ -338,6 +352,7 @@ Resources:
                 TargetGroupName: UserRegistrationUiTargetGroup
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: UserRegistrationUiService
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
     NginxExternalService:
         Type: AWS::CloudFormation::Stack
@@ -355,6 +370,7 @@ Resources:
                 TargetGroupName: NginxExternalTG
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: NginxExternalService
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
     PrometheusService:
         Type: AWS::CloudFormation::Stack
@@ -374,6 +390,7 @@ Resources:
                 ServiceName: PrometheusService
                 ServiceDeploymentMaximumPercent: 100
                 ServiceDeploymentMinimumHealthyPercent: 0
+                DesiredCount: 1
 
     PrometheusSupportService:
         Type: AWS::CloudFormation::Stack
@@ -391,6 +408,7 @@ Resources:
                 TargetGroupName: PrometheusSupportTG
                 VPC: !ImportValue "vpc:VPC"
                 ServiceName: PrometheusSupportService
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
     AlertmanagerTaskDefinition:
         Type: AWS::CloudFormation::Stack

@@ -46,7 +46,6 @@ Parameters:
     InitialClusterSize:
         Description: How many ECS hosts do you want to initially deploy?
         Type: Number
-        Default: 1
         MinValue: 0
 
     ECSHostInstanceType:
@@ -154,7 +153,7 @@ Resources:
         Properties:
             DesiredCapacity: !Ref InitialClusterSize
             LaunchConfigurationName: !Ref ECSLaunchConfiguration
-            MaxSize: 2
+            MaxSize: 10
             MinSize: 1
             Tags:
                 - Key: Name
