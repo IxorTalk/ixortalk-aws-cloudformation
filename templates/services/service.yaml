@@ -89,6 +89,15 @@ Parameters:
         Description: The VPC that the ECS cluster is deployed to
         Type: AWS::EC2::VPC::Id
 
+    TargetGroupStickinessEnabled:
+        Description: Boolean indicating if stickiness is required
+        Type: String
+        AllowedValues:
+            - "false"
+            - "true"
+        Default: "false"
+
+
 Resources:
 
     Service:
@@ -127,6 +136,8 @@ Resources:
             TargetGroupAttributes:
                 - Key: deregistration_delay.timeout_seconds
                   Value: '30'
+                - Key: stickiness.enabled
+                  Value: !Ref TargetGroupStickinessEnabled
 
     ListenerRule:
         Type: AWS::ElasticLoadBalancingV2::ListenerRule

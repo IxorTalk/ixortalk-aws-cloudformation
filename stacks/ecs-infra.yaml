@@ -59,6 +59,12 @@ Parameters:
         Default: t2.large
         Type: String
 
+    NumberOfEC2InstancesInTheECSCluster:
+        Default: 1
+        Type: Number
+        MinValue: 0
+
+
 Resources:
 
     BastionHost:
@@ -89,6 +95,7 @@ Resources:
                 Subnets: !ImportValue "vpc:PrivateSubnets"
                 VPC: !ImportValue "vpc:VPC"
                 EFSFileSystemID: !ImportValue "vpc:EFSFileSystemID"
+                InitialClusterSize: !Ref NumberOfEC2InstancesInTheECSCluster
 
     ExternalLB:
         Type: AWS::CloudFormation::Stack
