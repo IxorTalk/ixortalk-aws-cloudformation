@@ -189,7 +189,7 @@ Resources:
             Code:
                 S3Bucket: !Ref LambdaFunctionStoreS3Bucket
                 S3Key: !Ref S3LogsToCloudWatchLambdaS3Key
-            Runtime: nodejs8.10
+            Runtime: nodejs12.x
 
     S3LogsToCloudwatchLambdaInvokePermission:
         Type: AWS::Lambda::Permission
