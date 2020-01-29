@@ -43,6 +43,9 @@ Parameters:
     PrometheusImageVersion:
         Type: String
 
+    ContainerMemory:
+        Type: Number
+
 Resources:
 
     TaskDefinition:
@@ -52,7 +55,7 @@ Resources:
             ContainerDefinitions:
                 - Name: ixortalk-prometheus
                   Image: !Sub ixortalk/ixortalk-prometheus:${PrometheusImageVersion}
-                  Memory: 384
+                  Memory: !Ref ContainerMemory
                   User: "root"
                   Environment:
                   - Name: "IXORTALK_PROFILE"
