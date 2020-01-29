@@ -150,6 +150,10 @@ Parameters:
         Type: Number
         MinValue: 0
 
+    PrometheusContainerMemory:
+        Default: 384
+        Type: Number
+
 Resources:
 
     AlertManagerService:
@@ -550,6 +554,7 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 PrometheusImageVersion: !Ref PrometheusImageVersion
+                ContainerMemory: !Ref PrometheusContainerMemory
 
     PrometheusSupportTaskDefinition:
         Type: AWS::CloudFormation::Stack
