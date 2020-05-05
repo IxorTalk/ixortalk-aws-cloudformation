@@ -88,7 +88,7 @@ Resources:
                 - Name: ixortalk-blackbox-exporter
                   Image: !Sub ixortalk/ixortalk-blackbox-exporter:${BlackboxExporterImageVersion}
                   Memory: 64
-                  Essential: false
+                  Essential: true
                   Environment:
                   - Name: "IXORTALK_PROFILE"
                     Value: !Ref SpringProfilesActive
@@ -113,7 +113,7 @@ Resources:
                 - Name: ixortalk-node-exporter
                   Image: !Sub prom/node-exporter:${NodeExporterImageVersion}
                   Memory: 64
-                  Essential: false
+                  Essential: true
                   User: "root"
                   MountPoints:
                     - SourceVolume: "node-exporter-proc-volume"
@@ -143,7 +143,7 @@ Resources:
                 - Name: ixortalk-cadvisor
                   Image: !Sub google/cadvisor:${CAdvisorImageVersion}
                   Memory: 256
-                  Essential: false
+                  Essential: true
                   User: "root"
                   MountPoints:
                     - SourceVolume: "cadvisor-docker-volume"
