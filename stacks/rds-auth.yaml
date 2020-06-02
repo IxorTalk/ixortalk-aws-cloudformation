@@ -60,6 +60,9 @@ Parameters:
         Type: String
         Default: db.t2.small
 
+    OrganizationApiDBPassword:
+        Type: String
+
 
 Resources:
 
@@ -86,3 +89,34 @@ Resources:
                 Parameters:
                     RDSCustomResourcePSQLDbS3Bucket: !Ref RDSCustomResourcePSQLDbS3Bucket
                     RDSCustomResourcePSQLDbS3Key: !Ref RDSCustomResourcePSQLDbS3Key
+
+        OrganizationDB:
+            Type: Custom::PgSqlDB
+            Properties:
+                loglevel: "DEBUG"
+                ServiceToken: !GetAtt RDSCustomResourcePSQLDb.Outputs.serviceToken
+
+                DBHost: !GetAtt RDSAuth.Outputs.RDSHost
+                DBRootUser: "root"
+                DBRootPassword: !Ref RDSMasterPassword
+
+                DBToCreate: "OrganizationApiDB"
+                DBUser: "organization"
+                DBPassword: !Ref OrganizationApiDBPassword
+
+Outputs:
+
+        OrganizationApiDBJDBCConnectionString:
+            Value: !GetAtt OrganizationDB.JDBCConnectionString
+            Export:
+                Name: "rds:OrganizationApiDB-JDBCConnectionString"
+
+        OrganizationApiDBJDBCUsername:
+            Value: !GetAtt OrganizationDB.JDBCUsername
+            Export:
+                Name: "rds:OrganizationApiDB-JDBCUsername"
+
+        OrganizationApiDBJDBCPassword:
+            Value: !GetAtt OrganizationDB.JDBCPassword
+            Export:
+                Name: "rds:OrganizationApiDB-JDBCPassword"

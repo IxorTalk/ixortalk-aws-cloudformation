@@ -110,6 +110,10 @@ Parameters:
         Type: String
         Default: latest
 
+    OrganizationApiImageVersion:
+        Type: String
+        Default: latest
+
     UserRegistrationApiImageVersion:
         Type: String
         Default: latest
@@ -322,6 +326,24 @@ Resources:
                 ServiceName: MailingService
                 DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
+    OrganizationApiService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-organization-api
+                ContainerPort: 8008
+                HealthCheckPath: /organization/actuator/health
+                Listener: !ImportValue "ecs-infra:InternalLB-HTTPS-Listener"
+                ListenerPath: /organization/*
+                ListenerRulePriority: 5
+                TaskDefinition: !GetAtt OrganizationApiTaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: OrganizationApiTG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: OrganizationApiService
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
+
     UserRegistrationApiService:
         Type: AWS::CloudFormation::Stack
         Properties:
@@ -510,6 +532,19 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 MailingServiceImageVersion: !Ref MailingServiceImageVersion
+
+    OrganizationApiTaskDefinition:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/organization-api.taskdefinition.yaml
+            Parameters:
+                LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                JDBCConnectionString: !ImportValue "rds:OrganizationApiDB-JDBCConnectionString"
+                JDBCUsername: !ImportValue "rds:OrganizationApiDB-JDBCUsername"
+                JDBCPassword: !ImportValue "rds:OrganizationApiDB-JDBCPassword"
+                SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
+                SpringProfilesActive: !Ref SpringProfilesActive
+                OrganizationApiImageVersion: !Ref OrganizationApiImageVersion
 
     UserRegistrationApiServiceTaskDefinition:
         Type: AWS::CloudFormation::Stack
