@@ -130,7 +130,7 @@ Mappings:
         t3.large:
             price: 0.096
         t3.xlarge:
-            price: 0.384
+            price: 0.192
 
 Resources:
 
