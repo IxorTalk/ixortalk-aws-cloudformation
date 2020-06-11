@@ -46,11 +46,16 @@ Parameters:
     IotCaCertId:
         Description: The id of the IoT CA Certificate
         Type: String
+        Default: ""
+
+Conditions:
+    IotCertsCondition: !Not [ !Equals ["", !Ref IotCaCertId]]
 
 Resources:
 
     AwsIotJustInTimeCerts:
         Type: AWS::CloudFormation::Stack
+        Condition: IotCertsCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/infrastructure/iot-jit-certs.yaml
             Parameters:
