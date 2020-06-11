@@ -125,6 +125,12 @@ Mappings:
             price: 0.1072
         t2.xlarge:
             price: 0.2144
+        t3.medium:
+            price: 0.048
+        t3.large:
+            price: 0.096
+        t3.xlarge:
+            price: 0.384
 
 Resources:
 
