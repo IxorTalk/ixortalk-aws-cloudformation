@@ -158,10 +158,88 @@ Parameters:
         Default: 384
         Type: Number
 
+    ExcludeAlertManagerService:
+        Type: String
+        Default: false
+
+    ExcludeAssetMgmtService:
+        Type: String
+        Default: false
+
+    ExcludeAssetStateService:
+        Type: String
+        Default: false
+
+    ExcludeAssetMgmtUIService:
+        Type: String
+        Default: false
+        
+    ExcludeConfigService:
+        Type: String
+        Default: false
+
+    ExcludeGatewayService:
+        Type: String
+        Default: false
+
+    ExcludeGrafanaService:
+        Type: String
+        Default: false
+
+    ExcludeImageService:
+        Type: String
+        Default: false
+
+    ExcludeMailingService:
+        Type: String
+        Default: false
+
+    ExcludeOrganizationApiService:
+        Type: String
+        Default: false
+
+    ExcludeUserRegistrationApiService:
+        Type: String
+        Default: false
+
+    ExcludeUserRegistrationUiService:
+        Type: String
+        Default: false
+
+    ExcludeNginxExternalService:
+        Type: String
+        Default: false
+
+    ExcludePrometheusService:
+        Type: String
+        Default: false
+
+    ExcludePrometheusSupportService:
+        Type: String
+        Default: false
+
+Conditions:
+    AlertManagerServiceCondition: !Not [ !Equals ["true", !Ref ExcludeAlertManagerService]]
+    AssetMgmtServiceCondition: !Not [ !Equals ["true", !Ref ExcludeAssetMgmtService]]
+    AssetStateServiceCondition: !Not [ !Equals ["true", !Ref ExcludeAssetStateService]]
+    AssetMgmtUIServiceCondition: !Not [ !Equals ["true", !Ref ExcludeAssetMgmtUIService]]
+    ConfigServiceCondition: !Not [ !Equals ["true", !Ref ExcludeConfigService]]
+    GatewayServiceCondition: !Not [ !Equals ["true", !Ref ExcludeGatewayService]]
+    GrafanaServiceCondition: !Not [ !Equals ["true", !Ref ExcludeGrafanaService]]
+    ImageServiceCondition: !Not [ !Equals ["true", !Ref ExcludeImageService]]
+    MailingServiceCondition: !Not [ !Equals ["true", !Ref ExcludeMailingService]]
+    OrganizationApiServiceCondition: !Not [ !Equals ["true", !Ref ExcludeOrganizationApiService]]
+    UserRegistrationApiServiceCondition: !Not [ !Equals ["true", !Ref ExcludeUserRegistrationApiService]]
+    UserRegistrationUiServiceCondition: !Not [ !Equals ["true", !Ref ExcludeUserRegistrationUiService]]
+    NginxExternalServiceCondition: !Not [ !Equals ["true", !Ref ExcludeNginxExternalService]]
+    PrometheusServiceCondition: !Not [ !Equals ["true", !Ref ExcludePrometheusService]]
+    PrometheusSupportServiceCondition: !Not [ !Equals ["true", !Ref ExcludePrometheusSupportService]]
+
 Resources:
 
     AlertManagerService:
         Type: AWS::CloudFormation::Stack
+        Condition: AlertManagerServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -182,6 +260,7 @@ Resources:
 
     AssetMgmtService:
         Type: AWS::CloudFormation::Stack
+        Condition: AssetMgmtServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -200,6 +279,7 @@ Resources:
 
     AssetStateService:
         Type: AWS::CloudFormation::Stack
+        Condition: AssetStateServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -217,25 +297,27 @@ Resources:
                 DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
     AssetMgmtUIService:
-            Type: AWS::CloudFormation::Stack
-            Properties:
-                TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
-                Parameters:
-                    Cluster: !ImportValue "ecs-infra:ECS-Cluster"
-                    ContainerName: ixortalk-assetmgmt-ui
-                    ContainerPort: 7001
-                    HealthCheckPath: /assetmgmt-ui/health
-                    Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
-                    ListenerPath: /assetmgmt-ui/*
-                    ListenerRulePriority: 70
-                    TaskDefinition: !GetAtt AssetmgmtUITaskDefinition.Outputs.TaskDefinition
-                    TargetGroupName: AssetmgmtUITG
-                    VPC: !ImportValue "vpc:VPC"
-                    ServiceName: AssetMgmtUIService
-                    DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
+        Type: AWS::CloudFormation::Stack
+        Condition: AssetMgmtUIServiceCondition
+        Properties:
+            TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
+            Parameters:
+                Cluster: !ImportValue "ecs-infra:ECS-Cluster"
+                ContainerName: ixortalk-assetmgmt-ui
+                ContainerPort: 7001
+                HealthCheckPath: /assetmgmt-ui/health
+                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                ListenerPath: /assetmgmt-ui/*
+                ListenerRulePriority: 70
+                TaskDefinition: !GetAtt AssetmgmtUITaskDefinition.Outputs.TaskDefinition
+                TargetGroupName: AssetmgmtUITG
+                VPC: !ImportValue "vpc:VPC"
+                ServiceName: AssetMgmtUIService
+                DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
 
     ConfigService:
         Type: AWS::CloudFormation::Stack
+        Condition: ConfigServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -254,6 +336,7 @@ Resources:
 
     GatewayService:
         Type: AWS::CloudFormation::Stack
+        Condition: GatewayServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -273,6 +356,7 @@ Resources:
 
     GrafanaService:
         Type: AWS::CloudFormation::Stack
+        Condition: GrafanaServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -291,6 +375,7 @@ Resources:
 
     ImageService:
         Type: AWS::CloudFormation::Stack
+        Condition: ImageServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -310,6 +395,7 @@ Resources:
 
     MailingService:
         Type: AWS::CloudFormation::Stack
+        Condition: MailingServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -328,6 +414,7 @@ Resources:
 
     OrganizationApiService:
         Type: AWS::CloudFormation::Stack
+        Condition: OrganizationApiServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -346,6 +433,7 @@ Resources:
 
     UserRegistrationApiService:
         Type: AWS::CloudFormation::Stack
+        Condition: UserRegistrationApiServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -364,6 +452,7 @@ Resources:
 
     UserRegistrationUiService:
         Type: AWS::CloudFormation::Stack
+        Condition: UserRegistrationUiServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -382,6 +471,7 @@ Resources:
 
     NginxExternalService:
         Type: AWS::CloudFormation::Stack
+        Condition: NginxExternalServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -400,6 +490,7 @@ Resources:
 
     PrometheusService:
         Type: AWS::CloudFormation::Stack
+        Condition: PrometheusServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -420,6 +511,7 @@ Resources:
 
     PrometheusSupportService:
         Type: AWS::CloudFormation::Stack
+        Condition: PrometheusSupportServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/service.yaml
             Parameters:
@@ -438,6 +530,7 @@ Resources:
 
     AlertmanagerTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: AlertManagerServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/alertmanager.taskdefinition.yaml
             Parameters:
@@ -448,6 +541,7 @@ Resources:
 
     AssetmgmtTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: AssetMgmtServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/assetmgmt.taskdefinition.yaml
             Parameters:
@@ -458,6 +552,7 @@ Resources:
 
     AssetStateTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: AssetStateServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/assetstate.taskdefinition.yaml
             Parameters:
@@ -468,6 +563,7 @@ Resources:
 
     AssetmgmtUITaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: AssetMgmtUIServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/assetmgmt-ui.taskdefinition.yaml
             Parameters:
@@ -478,6 +574,7 @@ Resources:
 
     ConfigserverTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: ConfigServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/configserver.taskdefinition.yaml
             Parameters:
@@ -492,6 +589,7 @@ Resources:
 
     GatewayTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: GatewayServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/gateway.taskdefinition.yaml
             Parameters:
@@ -502,6 +600,7 @@ Resources:
 
     GrafanaTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: GrafanaServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/grafana.taskdefinition.yaml
             Parameters:
@@ -513,6 +612,7 @@ Resources:
 
     ImageServiceTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: ImageServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/image-service.taskdefinition.yaml
             Parameters:
@@ -525,6 +625,7 @@ Resources:
 
     MailingServiceTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: MailingServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/mailing.service.taskdefinition.yaml
             Parameters:
@@ -535,6 +636,7 @@ Resources:
 
     OrganizationApiTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: OrganizationApiServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/organization-api.taskdefinition.yaml
             Parameters:
@@ -548,6 +650,7 @@ Resources:
 
     UserRegistrationApiServiceTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: UserRegistrationApiServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/user-registration-api.taskdefinition.yaml
             Parameters:
@@ -561,6 +664,7 @@ Resources:
 
     UserRegistrationUiServiceTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: UserRegistrationUiServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/user-registration-ui.taskdefinition.yaml
             Parameters:
@@ -571,6 +675,7 @@ Resources:
 
     NginxExternalTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: NginxExternalServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/nginx-external.taskdefinition.yaml
             Parameters:
@@ -581,6 +686,7 @@ Resources:
 
     PrometheusTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: PrometheusServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/prometheus.taskdefinition.yaml
             Parameters:
@@ -593,6 +699,7 @@ Resources:
 
     PrometheusSupportTaskDefinition:
         Type: AWS::CloudFormation::Stack
+        Condition: PrometheusSupportServiceCondition
         Properties:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/prometheus-support.taskdefinition.yaml
             Parameters:
