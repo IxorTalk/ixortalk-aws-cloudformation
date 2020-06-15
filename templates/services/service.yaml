@@ -83,7 +83,7 @@ Parameters:
 
     ServiceDeploymentMinimumHealthyPercent:
         Type: Number
-        Default: 100
+        Default: 50
 
     VPC:
         Description: The VPC that the ECS cluster is deployed to
@@ -110,8 +110,8 @@ Resources:
             DesiredCount: !Ref DesiredCount
             HealthCheckGracePeriodSeconds: !Ref HealthCheckGracePeriodSeconds
             DeploymentConfiguration:
-                MaximumPercent: 200
-                MinimumHealthyPercent: 50
+                MaximumPercent: !Ref ServiceDeploymentMaximumPercent
+                MinimumHealthyPercent: !Ref ServiceDeploymentMinimumHealthyPercent
             TaskDefinition: !Ref TaskDefinition
             LoadBalancers:
                 - ContainerName: !Ref ContainerName
