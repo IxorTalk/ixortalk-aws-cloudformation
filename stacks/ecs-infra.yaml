@@ -59,6 +59,10 @@ Parameters:
         Default: t2.large
         Type: String
 
+    ECSForceOnDemandInstances:
+        Type: String
+        Default: "false"
+
     NumberOfEC2InstancesInTheECSCluster:
         Default: 1
         Type: Number
@@ -96,6 +100,7 @@ Resources:
                 VPC: !ImportValue "vpc:VPC"
                 EFSFileSystemID: !ImportValue "vpc:EFSFileSystemID"
                 InitialClusterSize: !Ref NumberOfEC2InstancesInTheECSCluster
+                ECSForceOnDemandInstances: !Ref ECSForceOnDemandInstances
 
     ExternalLB:
         Type: AWS::CloudFormation::Stack

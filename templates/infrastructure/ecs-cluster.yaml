@@ -73,9 +73,16 @@ Parameters:
         Description: The EFS file system ID
         Type: String
 
+    ECSForceOnDemandInstances:
+        Type: String
+        AllowedValues:
+            - true
+            - false
+
 Conditions:
     EC2HostSSHKeyNameProvided: !Not [ !Equals ["", !Ref EC2HostSSHKeyName]]
     IsProd: !Or [!Equals ["prod", !Ref Environment], !Equals ["prd", !Ref Environment]]
+    UseOnDemandInstances: !Or [ Condition: IsProd, !Equals ["true", !Ref ECSForceOnDemandInstances]]
 
 Mappings:
 
@@ -176,7 +183,7 @@ Resources:
             KeyName: !If [EC2HostSSHKeyNameProvided, !Ref EC2HostSSHKeyName, !Ref "AWS::NoValue"]
             SecurityGroups:
                 - !Ref SecurityGroup
-            SpotPrice: !If [ IsProd, !Ref "AWS::NoValue", !FindInMap [InstanceTypeToOnDemandPrice, !Ref ECSHostInstanceType, price] ]
+            SpotPrice: !If [ UseOnDemandInstances, !Ref "AWS::NoValue", !FindInMap [InstanceTypeToOnDemandPrice, !Ref ECSHostInstanceType, price] ]
             UserData:
                 #Ensures the latest aws helper scripts are installed
                 "Fn::Base64": !Sub |
