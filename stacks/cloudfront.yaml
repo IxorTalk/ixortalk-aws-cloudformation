@@ -60,5 +60,5 @@ Resources:
                 CertificateARN: !Ref CloudFrontCertificateARN
                 DistributionAlias: !Join
                   - "."
-                  - - !If [ IsProd, assets, !Sub "assets-${Environment}"]
+                  - - !Sub "${SubdomainExternal}-assets"
                     - !Ref HostedZoneNameWithoutDot
