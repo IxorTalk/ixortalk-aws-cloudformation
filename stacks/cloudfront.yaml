@@ -46,6 +46,11 @@ Parameters:
         Description: The Certificate ARN to be used for the cloudfront distribution
         Type: String
 
+    SubdomainExternal:
+        Description: The external subdomain used by the platform
+        Type: String
+
+
 Conditions:
     IsProd: !Or [!Equals ["prod", !Ref Environment], !Equals ["prd", !Ref Environment]]
 
