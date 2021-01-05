@@ -63,6 +63,7 @@ Resources:
                 ViewerCertificate:
                     AcmCertificateArn: !Ref CertificateARN
                     SslSupportMethod: sni-only
+                    MinimumProtocolVersion: TLSv1.2_2019
 
     AssetsCloudFrontOriginAccessIdentity:
         Type: AWS::CloudFront::CloudFrontOriginAccessIdentity

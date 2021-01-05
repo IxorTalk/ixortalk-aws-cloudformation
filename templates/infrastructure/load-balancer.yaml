@@ -235,6 +235,7 @@ Resources:
             LoadBalancerArn: !Ref LoadBalancer
             Port: 443
             Protocol: HTTPS
+            SslPolicy: ELBSecurityPolicy-FS-1-2-Res-2019-08
             DefaultActions:
                 - Type: forward
                   TargetGroupArn: !Ref DefaultTargetGroup
