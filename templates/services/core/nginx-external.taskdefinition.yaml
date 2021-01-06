@@ -58,7 +58,7 @@ Resources:
                   - Name: "IXORTALK_NGINX_ENABLE_BASIC_AUTH"
                     Value: 'false'
                   - Name: "IXORTALK_CONFIG_SERVER_URL"
-                    Value: !Sub https://${LoadbalancerDNS}/config
+                    Value: !Sub http://${LoadbalancerDNS}/config
                   - Name: "IXORTALK_NGINX_SUFFIX"
                     Value: external
                   PortMappings:

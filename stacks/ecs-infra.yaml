@@ -124,6 +124,7 @@ Resources:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/infrastructure/load-balancer.yaml
             Parameters:
                 CertificateARN: !Ref LBCertificateARN
+                HTTPListenerExportName: ecs-infra:InternalLB-HTTP-Listener
                 HTTPSListenerExportName: ecs-infra:InternalLB-HTTPS-Listener
                 LoadBalancerName: Internal-Loadbalancer
                 LoadBalancerDNSExportName: ecs-infra:InternalLB-DNS

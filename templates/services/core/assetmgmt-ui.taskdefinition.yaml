@@ -54,7 +54,7 @@ Resources:
                   - Name: "IXORTALK_PROFILE"
                     Value: !Ref SpringProfilesActive
                   - Name: "IXORTALK_CONFIG_SERVER_URL"
-                    Value: !Sub https://${LoadbalancerDNS}/config
+                    Value: !Sub http://${LoadbalancerDNS}/config
                   - Name: "IXORTALK_CONFIG_SERVER_LABEL"
                     Value: !Ref SpringCloudConfigLabel
                   PortMappings:
