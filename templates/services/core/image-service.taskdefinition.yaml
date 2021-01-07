@@ -59,7 +59,7 @@ Resources:
         Properties:
             BucketName: !Sub ${ProjectName}-${Environment}-image-service
             Tags:
-                - Key: "ixortalk:ass:s3:clean-bucket-on-stop"
+                - Key: "ixortalk:ass:s3:backup-and-empty-bucket-on-stop"
                   Value: !If [ IsProd, "no", "yes" ]
             PublicAccessBlockConfiguration:
                 IgnorePublicAcls: true
