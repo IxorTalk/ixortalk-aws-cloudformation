@@ -64,8 +64,10 @@ Resources:
         Properties:
             BucketName: !Sub ${ProjectName}-${Environment}-user-profile-pictures
             Tags:
-                - Key: "ixortalk:ass:s3:clean-bucket-on-stop"
+                - Key: "ixortalk:ass:s3:backup-and-empty-bucket-on-stop"
                   Value: !If [ IsProd, "no", "yes" ]
+                - Key: "ixortalk:ass:s3:backup-and-empty-bucket-on-stop-acl"
+                  Value: "public-read"
             AccessControl: PublicRead
 
 
