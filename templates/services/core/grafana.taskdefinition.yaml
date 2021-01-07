@@ -65,7 +65,7 @@ Resources:
                   - Name: "IXORTALK_NGINX_ENABLE_BASIC_AUTH"
                     Value: 'false'
                   - Name: "IXORTALK_CONFIG_SERVER_URL"
-                    Value: !Sub https://${LoadbalancerDNS}/config
+                    Value: !Sub http://${LoadbalancerDNS}/config
                   - Name: "IXORTALK_NGINX_SUFFIX"
                     Value: grafana
                   PortMappings:
@@ -86,7 +86,7 @@ Resources:
                   - Name: "IXORTALK_CONFIG_SERVER_LABEL"
                     Value: !Ref SpringCloudConfigLabel
                   - Name: "IXORTALK_CONFIG_SERVER_URL"
-                    Value: !Sub https://${LoadbalancerDNS}/config
+                    Value: !Sub http://${LoadbalancerDNS}/config
                   - Name: "GF_SECURITY_ADMIN_PASSWORD"
                     Value: "adminadmin"
                   - Name: "GF_USERS_ALLOW_SIGN_UP"

@@ -66,7 +66,7 @@ Resources:
         - Name: "SPRING_PROFILES_ACTIVE"
           Value: !Ref SpringProfilesActive
         - Name: "SPRING_CLOUD_CONFIG_URI"
-          Value: !Sub https://${LoadbalancerDNS}/config
+          Value: !Sub http://${LoadbalancerDNS}/config
         - Name: "SPRING_DATASOURCE_URL"
           Value: !Ref JDBCConnectionString
         - Name: "SPRING_DATASOURCE_USERNAME"

@@ -63,7 +63,7 @@ Resources:
                   - Name: "IXORTALK_CONFIG_SERVER_LABEL"
                     Value: !Ref SpringCloudConfigLabel
                   - Name: "IXORTALK_CONFIG_SERVER_URL"
-                    Value: !Sub https://${LoadbalancerDNS}/config
+                    Value: !Sub http://${LoadbalancerDNS}/config
                   MountPoints:
                     - SourceVolume: "assetmgmt-volume"
                       ContainerPath: "/assets"

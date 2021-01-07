@@ -326,7 +326,7 @@ Resources:
                 ContainerPort: 8899
                 DesiredCount: !Ref NumberOfEC2InstancesInTheECSCluster
                 HealthCheckPath: /config/actuator/health
-                Listener: !ImportValue ecs-infra:InternalLB-HTTPS-Listener
+                Listener: !ImportValue ecs-infra:InternalLB-HTTP-Listener
                 ListenerPath: /config/*
                 ListenerRulePriority: 7
                 TaskDefinition: !GetAtt ConfigserverTaskDefinition.Outputs.TaskDefinition
@@ -535,6 +535,7 @@ Resources:
             TemplateURL: !Sub https://s3.eu-central-1.amazonaws.com/${S3TemplatesBucketName}/services/core/alertmanager.taskdefinition.yaml
             Parameters:
                 LoadbalancerDNS: !Join [".", ["loadbalancer", "internal", !Ref HostedZoneNameWithoutDot]]
+                ExternalLoadbalancerDNS: !Join [".", [!Ref SubdomainExternal, !Ref HostedZoneNameWithoutDot]]
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 AlertManagerImageVersion: !Ref AlertManagerImageVersion
