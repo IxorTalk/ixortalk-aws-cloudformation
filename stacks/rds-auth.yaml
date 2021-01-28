@@ -53,7 +53,7 @@ Parameters:
 
     RDSCustomResourcePSQLDbS3Key:
         Type: String
-        Default: aws-lambda-manage-pgsql-dbs-17ae2642d4dc6aeee84dbaa4dd7edc09a50d4b43.zip
+        Default: aws-lambda-manage-pgsql-dbs-7e25595e49c6e201d370b8961b81b301c144cfc6.zip
 
     DBInstanceType:
         Description: Instance type to use for RDS database
