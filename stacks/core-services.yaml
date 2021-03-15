@@ -74,69 +74,137 @@ Parameters:
         Type: String
         Default: latest
 
+    AlertManagerCustomImage:
+        Type: String
+        Default: ""
+
     AssetMgmtImageVersion:
         Type: String
         Default: latest
+
+    AssetMgmtCustomImage:
+        Type: String
+        Default: ""
 
     AssetStateImageVersion:
         Type: String
         Default: latest
 
+    AssetStateCustomImage:
+        Type: String
+        Default: ""
+
     AssetMgmtUiImageVersion:
         Type: String
         Default: latest
+
+    AssetMgmtUiCustomImage:
+        Type: String
+        Default: ""
 
     ConfigServerImageVersion:
         Type: String
         Default: latest
 
+    ConfigServerCustomImage:
+        Type: String
+        Default: ""
+
     GatewayImageVersion:
         Type: String
         Default: latest
+
+    GatewayCustomImage:
+        Type: String
+        Default: ""
 
     ImageServiceImageVersion:
         Type: String
         Default: latest
 
+    ImageServiceCustomImage:
+        Type: String
+        Default: ""
+
     NginxImageVersion:
         Type: String
         Default: latest
+
+    NginxCustomImage:
+        Type: String
+        Default: ""
 
     GrafanaImageVersion:
         Type: String
         Default: latest
 
+    GrafanaCustomImage:
+        Type: String
+        Default: ""
+
     MailingServiceImageVersion:
         Type: String
         Default: latest
+
+    MailingServiceCustomImage:
+        Type: String
+        Default: ""
 
     OrganizationApiImageVersion:
         Type: String
         Default: latest
 
+    OrganizationApiCustomImage:
+        Type: String
+        Default: ""
+
     UserRegistrationApiImageVersion:
         Type: String
         Default: latest
+
+    UserRegistrationApiCustomImage:
+        Type: String
+        Default: ""
 
     UserRegistrationUiImageVersion:
         Type: String
         Default: latest
 
+    UserRegistrationUiCustomImage:
+        Type: String
+        Default: ""
+
     PrometheusImageVersion:
         Type: String
         Default: latest
+
+    PrometheusCustomImage:
+        Type: String
+        Default: ""
 
     BlackboxExporterImageVersion:
         Type: String
         Default: latest
 
+    BlackboxExporterCustomImage:
+        Type: String
+        Default: ""
+
     CAdvisorImageVersion:
         Type: String
         Default: latest
 
+    CAdvisorCustomImage:
+        Type: String
+        Default: ""
+
     NodeExporterImageVersion:
         Type: String
         Default: latest
+
+    NodeExporterCustomImage:
+        Type: String
+        Default: ""
 
     PrometheusSupportNginxAuthEnabled:
         Type: String
@@ -539,6 +607,7 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 AlertManagerImageVersion: !Ref AlertManagerImageVersion
+                AlertManagerCustomImage: !Ref AlertManagerCustomImage
 
     AssetmgmtTaskDefinition:
         Type: AWS::CloudFormation::Stack
@@ -550,6 +619,7 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 AssetMgmtImageVersion: !Ref AssetMgmtImageVersion
+                AssetMgmtCustomImage: !Ref AssetMgmtCustomImage
 
     AssetStateTaskDefinition:
         Type: AWS::CloudFormation::Stack
@@ -561,6 +631,7 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 AssetStateImageVersion: !Ref AssetStateImageVersion
+                AssetStateCustomImage: !Ref AssetStateCustomImage
 
     AssetmgmtUITaskDefinition:
         Type: AWS::CloudFormation::Stack
@@ -572,6 +643,7 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 AssetMgmtUiImageVersion: !Ref AssetMgmtUiImageVersion
+                AssetMgmtUiCustomImage: !Ref AssetMgmtUiCustomImage
 
     ConfigserverTaskDefinition:
         Type: AWS::CloudFormation::Stack
@@ -586,6 +658,7 @@ Resources:
                 SpringCloudConfigServerURI: !Ref SpringCloudConfigServerURI
                 SpringProfilesActive: !Ref SpringProfilesActive
                 ConfigServerImageVersion: !Ref ConfigServerImageVersion
+                ConfigServerCustomImage: !Ref ConfigServerCustomImage
                 GitUriPrefix: !Select [ 0, !Split [ ':', !Ref SpringCloudConfigServerURI ] ]
 
     GatewayTaskDefinition:
@@ -598,6 +671,7 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 GatewayImageVersion: !Ref GatewayImageVersion
+                GatewayCustomImage: !Ref GatewayCustomImage
 
     GrafanaTaskDefinition:
         Type: AWS::CloudFormation::Stack
@@ -609,7 +683,9 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 NginxImageVersion: !Ref NginxImageVersion
+                NginxCustomImage: !Ref NginxCustomImage
                 GrafanaImageVersion: !Ref GrafanaImageVersion
+                GrafanaCustomImage: !Ref GrafanaCustomImage
 
     ImageServiceTaskDefinition:
         Type: AWS::CloudFormation::Stack
@@ -623,6 +699,7 @@ Resources:
                 ProjectName: !Ref ProjectName
                 Environment: !Ref Environment
                 ImageServiceImageVersion: !Ref ImageServiceImageVersion
+                ImageServiceCustomImage: !Ref ImageServiceCustomImage
 
     MailingServiceTaskDefinition:
         Type: AWS::CloudFormation::Stack
@@ -634,6 +711,7 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 MailingServiceImageVersion: !Ref MailingServiceImageVersion
+                MailingServiceCustomImage: !Ref MailingServiceCustomImage
 
     OrganizationApiTaskDefinition:
         Type: AWS::CloudFormation::Stack
@@ -648,6 +726,7 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 OrganizationApiImageVersion: !Ref OrganizationApiImageVersion
+                OrganizationApiCustomImage: !Ref OrganizationApiCustomImage
 
     UserRegistrationApiServiceTaskDefinition:
         Type: AWS::CloudFormation::Stack
@@ -661,6 +740,7 @@ Resources:
                 ProjectName: !Ref ProjectName
                 Environment: !Ref Environment
                 UserRegistrationApiImageVersion: !Ref UserRegistrationApiImageVersion
+                UserRegistrationApiCustomImage: !Ref UserRegistrationApiCustomImage
                 IncludeProfilePictureBucket: !Ref IncludeProfilePictureBucketWithUserRegistrationService
 
     UserRegistrationUiServiceTaskDefinition:
@@ -673,6 +753,7 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 UserRegistrationUiImageVersion: !Ref UserRegistrationUiImageVersion
+                UserRegistrationUiCustomImage: !Ref UserRegistrationUiCustomImage
 
     NginxExternalTaskDefinition:
         Type: AWS::CloudFormation::Stack
@@ -684,6 +765,7 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 NginxImageVersion: !Ref NginxImageVersion
+                NginxCustomImage: !Ref NginxCustomImage
 
     PrometheusTaskDefinition:
         Type: AWS::CloudFormation::Stack
@@ -696,6 +778,7 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 PrometheusImageVersion: !Ref PrometheusImageVersion
+                PrometheusCustomImage: !Ref PrometheusCustomImage
                 ContainerMemory: !Ref PrometheusContainerMemory
 
     PrometheusSupportTaskDefinition:
@@ -708,7 +791,11 @@ Resources:
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
                 NginxImageVersion: !Ref NginxImageVersion
+                NginxCustomImage: !Ref NginxCustomImage
                 BlackboxExporterImageVersion: !Ref BlackboxExporterImageVersion
+                BlackboxExporterCustomImage: !Ref BlackboxExporterCustomImage
                 CAdvisorImageVersion: !Ref CAdvisorImageVersion
+                CAdvisorCustomImage: !Ref CAdvisorCustomImage
                 NodeExporterImageVersion: !Ref NodeExporterImageVersion
+                NodeExporterCustomImage: !Ref NodeExporterCustomImage
                 PrometheusSupportNginxAuthEnabled: !Ref PrometheusSupportNginxAuthEnabled

@@ -41,8 +41,20 @@ Parameters:
     NginxImageVersion:
         Type: String
 
+    NginxCustomImage:
+      Description: A custom image to be used
+      Type: String
+
     GrafanaImageVersion:
         Type: String
+
+    GrafanaCustomImage:
+      Description: A custom image to be used
+      Type: String
+
+Conditions:
+  CustomNginxImageProvided: !Not [ !Equals [ "", !Ref NginxCustomImage ] ]
+  CustomGrafanaImageProvided: !Not [ !Equals [ "", !Ref GrafanaCustomImage ] ]
 
 Resources:
 
@@ -52,7 +64,7 @@ Resources:
             Family: ixortalk-grafana
             ContainerDefinitions:
                 - Name: ixortalk-nginx-grafana
-                  Image: !Sub ixortalk/ixortalk-nginx-docker-proxy:${NginxImageVersion}
+                  Image: !If [ CustomNginxImageProvided, !Ref NginxCustomImage, !Sub "ixortalk/ixortalk-nginx-docker-proxy:${NginxImageVersion}" ]
                   Hostname: ixortalk-nginx-grafana
                   Links:
                     - ixortalk-grafana
@@ -77,7 +89,7 @@ Resources:
                         awslogs-region: !Ref AWS::Region
 
                 - Name: ixortalk-grafana
-                  Image: !Sub ixortalk/ixortalk-grafana:${GrafanaImageVersion}
+                  Image: !If [ CustomGrafanaImageProvided, !Ref GrafanaCustomImage, !Sub "ixortalk/ixortalk-grafana:${GrafanaImageVersion}" ]
                   Hostname: ixortalk-grafana
                   Memory: 128
                   Environment:

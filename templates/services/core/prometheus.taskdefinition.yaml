@@ -46,6 +46,13 @@ Parameters:
     ContainerMemory:
         Type: Number
 
+    PrometheusCustomImage:
+      Description: A custom image to be used
+      Type: String
+
+Conditions:
+  CustomImageProvided: !Not [ !Equals [ "", !Ref PrometheusCustomImage ] ]
+
 Resources:
 
     TaskDefinition:
@@ -54,7 +61,7 @@ Resources:
             Family: ixortalk-prometheus
             ContainerDefinitions:
                 - Name: ixortalk-prometheus
-                  Image: !Sub ixortalk/ixortalk-prometheus:${PrometheusImageVersion}
+                  Image: !If [CustomImageProvided, !Ref PrometheusCustomImage, !Sub "ixortalk/ixortalk-prometheus:${PrometheusImageVersion}"]
                   Memory: !Ref ContainerMemory
                   User: "root"
                   Environment:

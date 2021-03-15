@@ -40,6 +40,13 @@ Parameters:
     AssetMgmtUiImageVersion:
         Type: String
 
+    AssetMgmtUiCustomImage:
+      Description: A custom image to be used
+      Type: String
+
+Conditions:
+  CustomImageProvided: !Not [ !Equals [ "", !Ref AssetMgmtUiCustomImage ] ]
+
 Resources:
 
     TaskDefinition:
@@ -48,7 +55,7 @@ Resources:
             Family: ixortalk-assetmgmt-ui
             ContainerDefinitions:
                 - Name: ixortalk-assetmgmt-ui
-                  Image: !Sub ixortalk/ixortalk-assetmgmt-ui:${AssetMgmtUiImageVersion}
+                  Image: !If [ CustomImageProvided, !Ref AssetMgmtUiCustomImage, !Sub "ixortalk/ixortalk-assetmgmt-ui:${AssetMgmtUiImageVersion}" ]
                   Memory: 64
                   Environment:
                   - Name: "IXORTALK_PROFILE"

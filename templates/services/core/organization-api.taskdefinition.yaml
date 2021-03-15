@@ -52,6 +52,14 @@ Parameters:
   OrganizationApiImageVersion:
     Type: String
 
+  OrganizationApiCustomImage:
+    Description: A custom image to be used
+    Type: String
+
+Conditions:
+    CustomImageProvided: !Not [ !Equals [ "", !Ref OrganizationApiCustomImage ] ]
+
+
 Resources:
 
   TaskDefinition:
@@ -60,7 +68,7 @@ Resources:
       Family: ixortalk-organization-api
       ContainerDefinitions:
       - Name: ixortalk-organization-api
-        Image: !Sub ixortalk/ixortalk-organization-api:${OrganizationApiImageVersion}
+        Image: !If [CustomImageProvided, !Ref OrganizationApiCustomImage, !Sub "ixortalk/ixortalk-organization-api:${OrganizationApiImageVersion}"]
         Memory: 768
         Environment:
         - Name: "SPRING_PROFILES_ACTIVE"

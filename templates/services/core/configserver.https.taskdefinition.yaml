@@ -37,9 +37,6 @@ Parameters:
         Description: The URI for the config server of the application
         Type: String
 
-    ConfigServerImageVersion:
-        Type: String
-
     ContainerPort:
         Type: Number
 

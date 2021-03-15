@@ -46,6 +46,10 @@ Parameters:
     UserRegistrationApiImageVersion:
         Type: String
 
+    UserRegistrationApiCustomImage:
+      Description: A custom image to be used
+      Type: String
+
     IncludeProfilePictureBucket:
         Type: String
         AllowedValues:
@@ -55,6 +59,7 @@ Parameters:
 Conditions:
       IsProd: !Or [!Equals ["prod", !Ref Environment], !Equals ["prd", !Ref Environment]]
       IncludeProfilePictureBucketCondition: !Equals ["true", !Ref IncludeProfilePictureBucket]
+      CustomImageProvided: !Not [ !Equals [ "", !Ref UserRegistrationApiCustomImage ] ]
 
 Resources:
 
@@ -76,7 +81,7 @@ Resources:
             TaskRoleArn: !ImportValue "ecs-infra:S3FullAccessServiceRoleArn"
             ContainerDefinitions:
                 - Name: ixortalk-user-registration-api
-                  Image: !Sub ixortalk/ixortalk-user-registration-api:${UserRegistrationApiImageVersion}
+                  Image: !If [CustomImageProvided, !Ref UserRegistrationApiCustomImage, !Sub "ixortalk/ixortalk-user-registration-api:${UserRegistrationApiImageVersion}"]
                   Memory: 640
                   Environment:
                   - Name: "SPRING_PROFILES_ACTIVE"

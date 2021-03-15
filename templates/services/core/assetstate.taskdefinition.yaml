@@ -39,6 +39,13 @@ Parameters:
     AssetStateImageVersion:
         Type: String
 
+    AssetStateCustomImage:
+      Description: A custom image to be used
+      Type: String
+
+Conditions:
+  CustomImageProvided: !Not [ !Equals [ "", !Ref AssetStateCustomImage ] ]
+
 Resources:
 
     TaskDefinition:
@@ -47,7 +54,7 @@ Resources:
             Family: ixortalk-assetstate
             ContainerDefinitions:
                 - Name: ixortalk-assetstate
-                  Image: !Sub ixortalk/ixortalk-assetstate:${AssetStateImageVersion}
+                  Image: !If [ CustomImageProvided, !Ref AssetStateCustomImage, !Sub "ixortalk/ixortalk-assetstate:${AssetStateImageVersion}" ]
                   Memory: 640
                   Environment:
                   - Name: "SPRING_PROFILES_ACTIVE"
