@@ -40,6 +40,13 @@ Parameters:
     MailingServiceImageVersion:
         Type: String
 
+    MailingServiceCustomImage:
+      Description: A custom image to be used
+      Type: String
+
+Conditions:
+    CustomImageProvided: !Not [ !Equals [ "", !Ref MailingServiceCustomImage ] ]
+
 Resources:
 
     TaskDefinition:
@@ -48,7 +55,7 @@ Resources:
             Family: ixortalk-mailing-service
             ContainerDefinitions:
                 - Name: ixortalk-mailing-service
-                  Image: !Sub ixortalk/ixortalk-mailing-service:${MailingServiceImageVersion}
+                  Image: !If [CustomImageProvided, !Ref MailingServiceCustomImage, !Sub "ixortalk/ixortalk-mailing-service:${MailingServiceImageVersion}"]
                   Memory: 640
                   Environment:
                   - Name: "SPRING_PROFILES_ACTIVE"

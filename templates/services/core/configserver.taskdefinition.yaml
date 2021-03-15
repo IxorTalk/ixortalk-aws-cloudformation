@@ -53,12 +53,16 @@ Parameters:
     ConfigServerImageVersion:
         Type: String
 
+    ConfigServerCustomImage:
+        Description: A custom image to be used
+        Type: String
+
 Conditions:
     UseBitbucketSsh: !Equals [ !Ref GitUriPrefix, "git@bitbucket.org" ]
     UseGithubSsh: !Equals [ !Ref GitUriPrefix, "git@github.com" ]
     UseSsh: !Or [ Condition: UseBitbucketSsh, Condition: UseGithubSsh ]
     UseHttps: !Equals [ !Ref GitUriPrefix, "https" ]
-
+    CustomImageProvided: !Not [ !Equals [ "", !Ref ConfigServerCustomImage ] ]
 
 Resources:
 
@@ -77,12 +81,11 @@ Resources:
                 SpringCloudConfigServerURI: !Ref SpringCloudConfigServerURI
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
-                ConfigServerImageVersion: !Ref ConfigServerImageVersion
                 GitHost: !If [ UseBitbucketSsh, Bitbucket, Github ]
                 ContainerPort: 8899
                 LogGroupName: configserver-logs
                 ContainerDefinitionName: ixortalk-configserver
-                ContainerImage: !Sub ixortalk/ixortalk-config-server:${ConfigServerImageVersion}
+                ContainerImage: !If [ CustomImageProvided, !Ref ConfigServerCustomImage, !Sub "ixortalk/ixortalk-config-server:${ConfigServerImageVersion}"]
                 ContainerMemory: 1024
 
     HttpsConfigserverTaskDefinition:
@@ -94,11 +97,10 @@ Resources:
                 SpringCloudConfigServerURI: !Ref SpringCloudConfigServerURI
                 SpringCloudConfigLabel: !Ref SpringCloudConfigLabel
                 SpringProfilesActive: !Ref SpringProfilesActive
-                ConfigServerImageVersion: !Ref ConfigServerImageVersion
                 ContainerPort: 8899
                 LogGroupName: configserver-logs
                 ContainerDefinitionName: ixortalk-configserver
-                ContainerImage: !Sub ixortalk/ixortalk-config-server:${ConfigServerImageVersion}
+                ContainerImage: !If [ CustomImageProvided, !Ref ConfigServerCustomImage, !Sub "ixortalk/ixortalk-config-server:${ConfigServerImageVersion}" ]
                 ContainerMemory: 1024
 
 Outputs:

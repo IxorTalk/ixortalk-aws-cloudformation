@@ -39,17 +39,39 @@ Parameters:
     NginxImageVersion:
         Type: String
 
+    NginxCustomImage:
+      Description: A custom image to be used
+      Type: String
+
     BlackboxExporterImageVersion:
+        Type: String
+
+    BlackboxExporterCustomImage:
+        Description: A custom image to be used
         Type: String
 
     CAdvisorImageVersion:
         Type: String
 
+    CAdvisorCustomImage:
+        Description: A custom image to be used
+        Type: String
+
     NodeExporterImageVersion:
+        Type: String
+
+    NodeExporterCustomImage:
+        Description: A custom image to be used
         Type: String
 
     PrometheusSupportNginxAuthEnabled:
         Type: String
+
+Conditions:
+  NginxCustomImageProvided: !Not [ !Equals ["", !Ref NginxCustomImage]]
+  BlackboxExporterCustomImageProvided: !Not [ !Equals ["", !Ref BlackboxExporterCustomImage]]
+  CAdvisorCustomImageProvided: !Not [ !Equals ["", !Ref CAdvisorCustomImage]]
+  NodeExporterCustomImageProvided: !Not [ !Equals ["", !Ref NodeExporterCustomImage]]
 
 
 Resources:
@@ -59,7 +81,7 @@ Resources:
             Family: ixortalk-prometheus-support-nginx
             ContainerDefinitions:
                 - Name: ixortalk-prometheus-support-nginx
-                  Image: !Sub ixortalk/ixortalk-nginx-docker-proxy:${NginxImageVersion}
+                  Image: !If [NginxCustomImageProvided, !Ref NginxCustomImage, !Sub "ixortalk/ixortalk-nginx-docker-proxy:${NginxImageVersion}"]
                   Memory: 64
                   Links:
                     - ixortalk-blackbox-exporter
@@ -86,7 +108,7 @@ Resources:
                         awslogs-region: !Ref AWS::Region
 
                 - Name: ixortalk-blackbox-exporter
-                  Image: !Sub ixortalk/ixortalk-blackbox-exporter:${BlackboxExporterImageVersion}
+                  Image: !If [BlackboxExporterCustomImageProvided, !Ref BlackboxExporterCustomImage, !Sub "ixortalk/ixortalk-blackbox-exporter:${BlackboxExporterImageVersion}"]
                   Memory: 64
                   Essential: true
                   Environment:
@@ -111,7 +133,7 @@ Resources:
                        awslogs-region: !Ref AWS::Region
 
                 - Name: ixortalk-node-exporter
-                  Image: !Sub prom/node-exporter:${NodeExporterImageVersion}
+                  Image: !If [NodeExporterCustomImageProvided, !Ref NodeExporterCustomImage, !Sub "prom/node-exporter:${NodeExporterImageVersion}"]
                   Memory: 64
                   Essential: true
                   User: "root"
@@ -141,7 +163,7 @@ Resources:
                         awslogs-region: !Ref AWS::Region
 
                 - Name: ixortalk-cadvisor
-                  Image: !Sub google/cadvisor:${CAdvisorImageVersion}
+                  Image: !If [CAdvisorCustomImageProvided, !Ref CAdvisorCustomImage, !Sub "google/cadvisor:${CAdvisorImageVersion}"]
                   Memory: 256
                   Essential: true
                   User: "root"

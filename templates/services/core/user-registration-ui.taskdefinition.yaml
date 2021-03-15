@@ -39,6 +39,13 @@ Parameters:
     UserRegistrationUiImageVersion:
         Type: String
 
+    UserRegistrationUiCustomImage:
+        Description: A custom image to be used
+        Type: String
+
+Conditions:
+  CustomImageProvided: !Not [ !Equals ["", !Ref UserRegistrationUiCustomImage]]
+
 Resources:
 
     TaskDefinition:
@@ -47,7 +54,7 @@ Resources:
             Family: ixortalk-user-registration-ui
             ContainerDefinitions:
                 - Name: ixortalk-user-registration-ui
-                  Image: !Sub ixortalk/ixortalk-user-registration-ui:${UserRegistrationUiImageVersion}
+                  Image: !If [CustomImageProvided, !Ref UserRegistrationUiCustomImage, !Sub "ixortalk/ixortalk-user-registration-ui:${UserRegistrationUiImageVersion}"]
                   Memory: 64
                   Environment:
                   - Name: "IXORTALK_PROFILE"

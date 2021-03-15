@@ -40,6 +40,13 @@ Parameters:
     NginxImageVersion:
         Type: String
 
+    NginxCustomImage:
+      Description: A custom image to be used
+      Type: String
+
+Conditions:
+    CustomImageProvided: !Not [ !Equals [ "", !Ref NginxCustomImage ] ]
+
 Resources:
     TaskDefinition:
         Type: AWS::ECS::TaskDefinition
@@ -47,7 +54,7 @@ Resources:
             Family: ixortalk-nginx-external
             ContainerDefinitions:
                 - Name: ixortalk-nginx-external
-                  Image: !Sub ixortalk/ixortalk-nginx-docker-proxy:${NginxImageVersion}
+                  Image: !If [CustomImageProvided, !Ref NginxCustomImage, !Sub "ixortalk/ixortalk-nginx-docker-proxy:${NginxImageVersion}"]
                   Hostname: ixortalk-nginx-external
                   Memory: 64
                   Environment:

@@ -40,6 +40,13 @@ Parameters:
     GatewayImageVersion:
         Type: String
 
+    GatewayCustomImage:
+      Description: A custom image to be used
+      Type: String
+
+Conditions:
+  CustomImageProvided: !Not [ !Equals [ "", !Ref GatewayCustomImage ] ]
+
 Resources:
 
     TaskDefinition:
@@ -48,7 +55,7 @@ Resources:
             Family: ixortalk-gateway
             ContainerDefinitions:
                 - Name: ixortalk-gateway
-                  Image: !Sub ixortalk/ixortalk-gateway:${GatewayImageVersion}
+                  Image: !If [ CustomImageProvided, !Ref GatewayCustomImage, !Sub "ixortalk/ixortalk-gateway:${GatewayImageVersion}"]
                   Memory: 640
                   Environment:
                   - Name: "SPRING_PROFILES_ACTIVE"
